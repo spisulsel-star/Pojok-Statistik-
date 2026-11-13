@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pojok Statistik – Simulasi Analisis Statistika Terapan</title>
+<style>
+:root{
+  --bg:#f3f5f9; --card:#fff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --pri:#4338ca; --pri-d:#312e81; --pri-l:#eef2ff; --ok:#047857; --ok-l:#d1fae5;
+  --warn:#b45309; --warn-l:#fef3c7; --err:#b91c1c; --err-l:#fee2e2; --p1:#2563eb; --p2:#f59e0b;
+  --fs:16px;
+}
+body.proj{--fs:19px}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+header{background:linear-gradient(120deg,var(--pri-d),var(--pri));color:#fff;padding:18px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.35rem}
+header p{margin:2px 0 0;opacity:.85;font-size:.85rem}
+.hbtn{display:flex;gap:8px;flex-wrap:wrap}
+main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card h2{margin:0 0 4px;font-size:1.1rem}
+.card h3{margin:18px 0 6px;font-size:1rem}
+.step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--pri);color:#fff;font-size:.85rem;margin-right:8px}
+.sub{color:var(--muted);font-size:.88rem;margin:0 0 12px}
+.btn{border:1px solid var(--pri);background:var(--pri);color:#fff;border-radius:8px;padding:8px 14px;font-size:.9rem;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--pri-d)}
+.btn.sec{background:#fff;color:var(--pri)}
+.btn.sec:hover{background:var(--pri-l)}
+.btn.sm{padding:3px 9px;font-size:.78rem}
+.btn.light{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5);color:#fff}
+.btn.light:hover{background:rgba(255,255,255,.28)}
+.btn.big{padding:11px 20px;font-size:1rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.drop{border:2px dashed #a5b4fc;border-radius:12px;padding:20px;text-align:center;background:var(--pri-l);cursor:pointer;flex:1;min-width:260px}
+.drop.over{background:#e0e7ff;border-color:var(--pri)}
+.drop small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px 16px}
+label.f{display:block;font-size:.82rem;color:var(--muted);font-weight:600}
+select,input[type=number],input[type=text]{width:100%;margin-top:3px;padding:7px 8px;border:1px solid #cbd5e1;border-radius:8px;font-size:.92rem;font-family:inherit;background:#fff;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid #cbd5e1;border-radius:20px;padding:3px 10px;font-size:.84rem;background:#fff;cursor:pointer;user-select:none}
+.chip input{margin:0}
+.chip.on{background:var(--pri-l);border-color:#a5b4fc}
+.tag{font-size:.7rem;border-radius:4px;padding:1px 6px;margin-left:4px;font-weight:600}
+.tag.num{background:var(--ok-l);color:var(--ok)} .tag.txt{background:#e0f2fe;color:#0369a1}
+.tw{overflow:auto;max-height:430px;border:1px solid var(--line);border-radius:8px;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{background:#f8fafc;position:sticky;top:0;z-index:1;font-weight:600}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr:hover td{background:#fafaff}
+.alert{border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.9rem}
+.alert.err{background:var(--err-l);color:var(--err);border:1px solid #fca5a5}
+.alert.warn{background:var(--warn-l);color:var(--warn);border:1px solid #fcd34d}
+.alert.info{background:var(--pri-l);color:var(--pri-d);border:1px solid #c7d2fe}
+.alert.ok{background:var(--ok-l);color:var(--ok);border:1px solid #6ee7b7}
+nav#tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:0;border-bottom:2px solid var(--line)}
+nav#tabs button{border:none;background:none;padding:10px 16px;font-size:.95rem;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;font-family:inherit;font-weight:600}
+nav#tabs button:hover{color:var(--pri)}
+nav#tabs button.act{color:var(--pri);border-bottom-color:var(--pri)}
+nav#tabs button:disabled{opacity:.4;cursor:not-allowed}
+.tabpanel{display:none;background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:18px 20px;margin-bottom:16px}
+.tabpanel.act{display:block}
+.when{background:#f8fafc;border-left:4px solid var(--pri);border-radius:6px;padding:10px 14px;font-size:.88rem;margin-bottom:14px}
+.when b{color:var(--pri-d)}
+.when ul{margin:4px 0 0 18px;padding:0}
+.results{margin-top:16px}
+.rtool{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;border-top:2px solid var(--line);padding-top:12px;margin-bottom:6px}
+.rtool h3{margin:0}
+figure.chart{margin:12px 0;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+figure.chart .ch{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--muted);margin-bottom:2px}
+figure.chart svg{display:block;max-width:900px;margin:0 auto}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:10px}
+.interp{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:.92rem}
+.interp h4{margin:0 0 6px;font-size:.95rem;color:var(--warn)}
+.interp p{margin:5px 0}
+.badge{display:inline-block;padding:1px 9px;border-radius:12px;font-size:.78rem;font-weight:700}
+.badge.ok{background:var(--ok-l);color:var(--ok)} .badge.ns{background:#f3f4f6;color:#4b5563}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fafbff}
+.kpi span{display:block;font-size:.76rem;color:var(--muted)} .kpi b{font-size:1.25rem;color:var(--pri-d)}
+.eq{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:12px 14px;overflow:auto;font-size:.88rem;margin:8px 0;white-space:pre-wrap}
+details{margin:10px 0;font-size:.88rem}
+details summary{cursor:pointer;color:var(--pri);font-weight:600}
+details pre{background:#0f172a;color:#cbd5e1;padding:12px;border-radius:8px;overflow:auto;font-size:.76rem;max-height:340px}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:#f1f5f9;padding:8px 12px;border-radius:6px;margin:4px 0;font-size:.82rem;white-space:pre-wrap}
+.hm td{text-align:center;font-weight:600}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px}
+[hidden]{display:none!important}
+@media (max-width:640px){.charts{grid-template-columns:1fr} main{padding:10px 8px 40px} .card,.tabpanel{padding:14px 12px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>📊 Pojok Statistik – Simulasi Analisis Statistika Terapan</h1>
+    <p>Lanjutan workshop “Analisis Data &amp; Statistika Terapan dengan Python” · Berjalan 100% offline di browser · tanpa coding</p>
+  </div>
+  <div class="hbtn">
+    <button class="btn light" id="btnProj" title="Perbesar huruf untuk proyektor">🖥️ Mode Proyektor</button>
+    <button class="btn light" id="btnReport" title="Unduh semua hasil analisis yang sudah dijalankan">📄 Unduh Laporan Teks</button>
+  </div>
+</header>
+
+<main>
+<!-- ============ LANGKAH 1: DATA ============ -->
+<section class="card" id="secData">
+  <h2><span class="step">1</span>Muat Data</h2>
+  <p class="sub">Unggah file <b>.xlsx</b> atau <b>.csv</b> milik Anda, atau coba dulu dengan data contoh. Data tidak dikirim ke mana pun – semua dihitung di browser Anda.</p>
+  <div class="row">
+    <div class="drop" id="drop">
+      <div style="font-size:1.6rem">📂</div>
+      <b>Klik atau seret file ke sini</b><br><small>Format: .xlsx / .csv (baris pertama = nama kolom)</small>
+      <input type="file" id="file" accept=".xlsx,.csv,.txt,.tsv" hidden>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <button class="btn big" id="btnSample">🧪 Coba dengan Data Contoh (Jawa Timur 2024–2025)</button>
+      <p class="sub" style="margin-top:8px">Data contoh adalah <b>data dummy/ilustrasi</b> 38 kabupaten/kota (IPM, Rata-rata Lama Sekolah, % Penduduk Miskin, Jumlah Penduduk) – <u>bukan data resmi BPS</u>.</p>
+      <button class="btn sec sm" id="btnTemplate">⬇ Unduh contoh sebagai CSV</button>
+    </div>
+  </div>
+  <details><summary>Format data yang disarankan</summary>
+    <p>Bentuk <b>“panjang”</b>: satu baris = satu wilayah pada satu tahun. Contoh:</p>
+    <div class="tw"><table><thead><tr><th>Wilayah</th><th>Kategori</th><th>Tahun</th><th>IPM</th><th>RLS</th></tr></thead>
+    <tbody><tr><td>Kab. Pacitan</td><td>Kabupaten</td><td>2024</td><td>70,9</td><td>7,6</td></tr><tr><td>Kab. Pacitan</td><td>Kabupaten</td><td>2025</td><td>71,5</td><td>7,7</td></tr><tr><td>Kota Malang</td><td>Kota</td><td>2024</td><td>84,6</td><td>11,1</td></tr></tbody></table></div>
+    <ul><li>Wajib: satu kolom <b>identifier wilayah</b> + minimal satu kolom <b>numerik</b>.</li>
+    <li>Opsional: kolom <b>tahun</b> (untuk uji berpasangan) dan kolom <b>kategori</b> (untuk uji kelompok independen).</li>
+    <li>Angka desimal boleh memakai titik (72.5) maupun koma (72,5). Sel kosong / “-” dianggap data hilang.</li>
+    <li>File .xlsx: yang dibaca adalah lembar (sheet) pilihan Anda. File .xls lama harap disimpan ulang sebagai .xlsx atau .csv.</li></ul>
+  </details>
+  <div id="dataMsg"></div>
+  <div id="preview" hidden>
+    <h3>Pratinjau data <span id="fileInfo" class="sub"></span></h3>
+    <div id="sheetPick" hidden class="row" style="margin-bottom:6px"><label class="f" style="min-width:220px">Lembar (sheet) Excel<select id="sheetSel"></select></label></div>
+    <div id="colChips" class="chips"></div>
+    <div class="tw" id="prevTable"></div>
+  </div>
+</section>
+
+<!-- ============ LANGKAH 2: PENGATURAN KOLOM ============ -->
+<section class="card" id="secCfg" hidden>
+  <h2><span class="step">2</span>Atur Peran Kolom</h2>
+  <p class="sub">Beri tahu dashboard fungsi tiap kolom. Dashboard sudah menebak otomatis – periksa dan ubah bila perlu.</p>
+  <div class="grid">
+    <label class="f">Kolom identifier wilayah *<select id="cId"></select></label>
+    <label class="f">Kolom kategori wilayah <small>(opsional – untuk uji kelompok independen)</small><select id="cCat"></select></label>
+    <label class="f">Kolom tahun / periode <small>(opsional – untuk uji berpasangan)</small><select id="cYear"></select></label>
+    <label class="f" id="wP1">Periode 1 (awal)<select id="cP1"></select></label>
+    <label class="f" id="wP2">Periode 2 (akhir)<select id="cP2"></select></label>
+    <label class="f" id="wPer">Periode untuk analisis lintas wilayah<select id="cPer"></select></label>
+    <label class="f">Taraf signifikansi α<input type="number" id="cAlpha" value="0.05" step="0.01" min="0.001" max="0.5"></label>
+  </div>
+  <label class="f" style="margin-top:12px">Kolom numerik yang akan dianalisis * <small>(hanya kolom bertipe numerik yang bisa dipilih)</small></label>
+  <div class="chips" id="cVars"></div>
+  <div id="cfgMsg"></div>
+  <p><button class="btn big" id="btnApply">✅ Terapkan &amp; Mulai Analisis</button></p>
+</section>
+
+<!-- ============ LANGKAH 3: ANALISIS ============ -->
+<section id="secAn" hidden>
+  <h2 style="margin:6px 0 8px"><span class="step">3</span>Pilih Metode Analisis</h2>
+  <nav id="tabs">
+    <button data-tab="explore" class="act">1 · Eksplorasi &amp; Visualisasi</button>
+    <button data-tab="paired">2 · Uji Berpasangan</button>
+    <button data-tab="indep">3 · Uji Kelompok Independen</button>
+    <button data-tab="corr">4 · Korelasi</button>
+    <button data-tab="reg">5 · Regresi Linear Berganda</button>
+  </nav>
+
+  <div class="tabpanel act" id="tab-explore">
+    <div class="when"><b>Kapan dipakai?</b> Selalu mulai dari sini, <u>sebelum</u> uji statistik apa pun.
+      <ul><li><b>Boxplot</b> – melihat sebaran, median, dan <i>outlier</i> (wilayah yang nilainya menyimpang jauh).</li>
+      <li><b>Ranking</b> – siapa tertinggi/terendah dan seberapa jauh dari rata-rata.</li>
+      <li><b>Dumbbell</b> &amp; <b>bar rata-rata</b> – melihat perubahan antar dua periode (perlu kolom tahun).</li></ul></div>
+    <div id="ctl-explore"></div>
+    <p><button class="btn" data-run="explore">▶ Jalankan Analisis</button></p>
+    <div class="results" id="res-explore"></div>
+  </div>
+
+  <div class="tabpanel" id="tab-paired">
+    <div class="when"><b>Kapan dipakai?</b> Membandingkan nilai <u>wilayah yang sama</u> pada dua periode (mis. 2024 vs 2025): “apakah rata-rata benar-benar berubah, atau hanya kebetulan?”
+      <ul><li><b>Paired t-test</b> (parametrik) – cocok bila selisih antar periode kira-kira berdistribusi normal.</li>
+      <li><b>Wilcoxon signed-rank</b> (non-parametrik) – alternatif bila data tidak normal/ada outlier; memakai peringkat selisih.</li>
+      <li>H<sub>0</sub>: tidak ada perubahan rata-rata. Jika p &lt; α → H<sub>0</sub> ditolak (perubahan signifikan).</li></ul>
+      <i>Syarat: kolom tahun dan Periode 1 &amp; 2 sudah diatur di langkah 2.</i></div>
+    <div id="ctl-paired"></div>
+    <p><button class="btn" data-run="paired">▶ Jalankan Analisis</button></p>
+    <div class="results" id="res-paired"></div>
+  </div>
+
+  <div class="tabpanel" id="tab-indep">
+    <div class="when"><b>Kapan dipakai?</b> Membandingkan dua <u>kelompok wilayah yang berbeda</u> (mis. Kabupaten vs Kota): “apakah rata-rata kedua kelompok berbeda?”
+      <ul><li><b>Welch’s t-test</b> (parametrik, tidak mengasumsikan varians sama – <code>equal_var=False</code>).</li>
+      <li><b>Mann-Whitney U</b> (non-parametrik) – membandingkan sebaran peringkat; aman untuk data tidak normal.</li>
+      <li>H<sub>0</sub>: tidak ada perbedaan antar kelompok.</li></ul>
+      <i>Syarat: kolom kategori sudah diatur di langkah 2.</i></div>
+    <div id="ctl-indep"></div>
+    <p><button class="btn" data-run="indep">▶ Jalankan Analisis</button></p>
+    <div class="results" id="res-indep"></div>
+  </div>
+
+  <div class="tabpanel" id="tab-corr">
+    <div class="when"><b>Kapan dipakai?</b> Mengukur <u>kekuatan dan arah hubungan</u> dua variabel numerik (mis. RLS dengan IPM).
+      <ul><li><b>Pearson</b> – hubungan <i>linear</i>, sensitif terhadap outlier.</li>
+      <li><b>Spearman</b> – hubungan <i>monoton</i> berbasis peringkat; lebih tahan outlier.</li>
+      <li>Koefisien r berkisar −1 s.d. +1. <b>Korelasi ≠ sebab-akibat.</b></li></ul></div>
+    <div id="ctl-corr"></div>
+    <p><button class="btn" data-run="corr">▶ Jalankan Analisis</button></p>
+    <div class="results" id="res-corr"></div>
+  </div>
+
+  <div class="tabpanel" id="tab-reg">
+    <div class="when"><b>Kapan dipakai?</b> Menjelaskan/memprediksi <u>satu variabel dependen (Y)</u> dari beberapa variabel independen (X).
+      <ul><li>Dihitung manual dengan persamaan matriks <code>β = (XᵀX)⁻¹ Xᵀy</code> – sama seperti <code>np.linalg.solve</code> di notebook.</li>
+      <li>Keluaran: persamaan regresi, R², uji F (model keseluruhan), uji t (tiap koefisien), residual, dan VIF (cek multikolinearitas).</li></ul></div>
+    <div id="ctl-reg"></div>
+    <p><button class="btn" data-run="reg">▶ Jalankan Analisis</button></p>
+    <div class="results" id="res-reg"></div>
+  </div>
+</section>
+</main>
+<footer>Pojok Statistik · seluruh rumus ditulis manual dalam JavaScript di berkas ini (klik kanan → View Source / buka dengan editor teks untuk belajar dari kodenya).</footer>
+
+<script>
+'use strict';
+/* =====================================================================
+   BAGIAN A — UTILITAS UMUM
+   ===================================================================== */
+class UserError extends Error {}
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const need = (cond, msg) => { if (!cond) throw new UserError(msg); };
+
+function nf(x, d = 3) { if (x === null || x === undefined || !isFinite(x)) return '–'; return x.toFixed(d).replace('.', ','); }
+function fv(x) { // format nilai "pintar" untuk tabel
+  if (x === null || x === undefined || !isFinite(x)) return '–';
+  const a = Math.abs(x);
+  if (a >= 10000) return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  if (a >= 100) return nf(x, 1);
+  return nf(x, 2);
+}
+function fp(p) { if (!isFinite(p)) return '–'; return p < 0.0001 ? '< 0,0001' : nf(p, 4); }
+function pq(p) { return p < 0.0001 ? 'p < 0,0001' : 'p = ' + nf(p, 4); }
+function fc(x) { // format koefisien
+  if (!isFinite(x)) return '–';
+  const a = Math.abs(x);
+  if (a !== 0 && (a < 0.001 || a >= 100000)) return x.toExponential(3).replace('.', ',');
+  return nf(x, 4);
+}
+const sgn = x => (x >= 0 ? '+' : '−');
+
+/* =====================================================================
+   BAGIAN B — STATISTIK DASAR
+   ===================================================================== */
+const sum = a => a.reduce((s, v) => s + v, 0);
+const mean = a => sum(a) / a.length;
+const variance = a => { const m = mean(a); return sum(a.map(v => (v - m) ** 2)) / (a.length - 1); }; // sampel (n-1)
+const sd = a => Math.sqrt(variance(a));
+function quantile(sorted, q) { // metode linear (sama dengan numpy default)
+  const h = (sorted.length - 1) * q, lo = Math.floor(h), hi = Math.ceil(h);
+  return sorted[lo] + (h - lo) * (sorted[hi] - sorted[lo]);
+}
+function describe(a) {
+  const s = [...a].sort((x, y) => x - y);
+  return { n: a.length, mean: mean(a), sd: a.length > 1 ? sd(a) : NaN, min: s[0], q1: quantile(s, .25),
+           median: quantile(s, .5), q3: quantile(s, .75), max: s[s.length - 1] };
+}
+function boxStats(vals) { // batas pagar Tukey 1,5×IQR
+  const d = describe(vals), iqr = d.q3 - d.q1, lo = d.q1 - 1.5 * iqr, hi = d.q3 + 1.5 * iqr;
+  const inside = vals.filter(v => v >= lo && v <= hi);
+  return { ...d, iqr, fenceLo: lo, fenceHi: hi, wLo: Math.min(...inside), wHi: Math.max(...inside) };
+}
+function rankAvg(a) { // peringkat rata-rata untuk nilai kembar (ties)
+  const idx = a.map((v, i) => i).sort((i, j) => a[i] - a[j]);
+  const ranks = new Array(a.length), ties = [];
+  for (let i = 0; i < idx.length;) {
+    let j = i; while (j + 1 < idx.length && a[idx[j + 1]] === a[idx[i]]) j++;
+    const r = (i + j) / 2 + 1; for (let k = i; k <= j; k++) ranks[idx[k]] = r;
+    if (j > i) ties.push(j - i + 1);
+    i = j + 1;
+  }
+  return { ranks, ties };
+}
+function jarqueBera(a) { // uji normalitas sederhana (H0: normal)
+  const n = a.length; if (n < 8) return null;
+  const m = mean(a), m2 = sum(a.map(v => (v - m) ** 2)) / n;
+  if (m2 === 0) return null;
+  const m3 = sum(a.map(v => (v - m) ** 3)) / n, m4 = sum(a.map(v => (v - m) ** 4)) / n;
+  const S = m3 / m2 ** 1.5, K = m4 / m2 ** 2, jb = n / 6 * (S * S + (K - 3) ** 2 / 4);
+  return { jb, p: Math.exp(-jb / 2), skew: S, kurt: K }; // chi-kuadrat df=2 → p = exp(-JB/2)
+}
+
+/* =====================================================================
+   BAGIAN C — DISTRIBUSI PROBABILITAS (untuk p-value)
+   ===================================================================== */
+function lgamma(x) { // pendekatan Lanczos
+  const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+    -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x);
+  x -= 1; let a = c[0]; const t = x + g + 0.5;
+  for (let i = 1; i < g + 2; i++) a += c[i] / (x + i);
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+function betacf(a, b, x) { // pecahan berlanjut (Lentz) untuk beta tak-lengkap
+  const FP = 1e-300; let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < FP) d = FP; d = 1 / d; let h = d;
+  for (let m = 1; m <= 300; m++) {
+    const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d;
+    const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break;
+  }
+  return h;
+}
+function incBeta(x, a, b) { // I_x(a,b) — fungsi beta tak-lengkap ter-regularisasi
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+const pT2 = (t, df) => incBeta(df / (df + t * t), df / 2, 0.5);          // p dua-sisi distribusi t
+const pF = (f, d1, d2) => (f <= 0 ? 1 : incBeta(d2 / (d2 + d1 * f), d2 / 2, d1 / 2)); // p ekor-atas distribusi F
+function erfc(x) { // Numerical Recipes, galat relatif < 1,2e-7
+  const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+  const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
+    t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+  return x >= 0 ? r : 2 - r;
+}
+const pZ2 = z => erfc(Math.abs(z) / Math.SQRT2);                          // p dua-sisi normal baku
+function tCrit(df, alpha = 0.05) { // nilai kritis t dua-sisi (bisection)
+  let lo = 0, hi = 1000; for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (pT2(mid, df) > alpha) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+
+/* =====================================================================
+   BAGIAN D — UJI HIPOTESIS
+   ===================================================================== */
+function pairedT(x1, x2) { // x2 − x1
+  const n = x1.length, d = x2.map((v, i) => v - x1[i]), md = mean(d), sdd = sd(d), se = sdd / Math.sqrt(n);
+  const df = n - 1, t = md / se, p = sdd === 0 ? (md === 0 ? 1 : 0) : pT2(t, df), tc = tCrit(df);
+  return { n, d, meanDiff: md, sdDiff: sdd, se, t, df, p, ci: [md - tc * se, md + tc * se], dz: md / sdd };
+}
+function wilcoxonSigned(x1, x2) {
+  const d = x2.map((v, i) => v - x1[i]).filter(v => v !== 0);   // selisih nol dibuang
+  const n = d.length; if (n < 1) return { n: 0, W: NaN, p: NaN, method: '-' };
+  const { ranks, ties } = rankAvg(d.map(Math.abs));
+  let Wp = 0, Wm = 0; d.forEach((v, i) => { if (v > 0) Wp += ranks[i]; else Wm += ranks[i]; });
+  const W = Math.min(Wp, Wm);
+  let p, method;
+  if (n <= 50 && ties.length === 0) { // eksak: hitung distribusi jumlah peringkat dengan DP
+    const maxS = n * (n + 1) / 2, ways = new Array(maxS + 1).fill(0); ways[0] = 1;
+    for (let r = 1; r <= n; r++) for (let s = maxS; s >= r; s--) ways[s] += ways[s - r];
+    let cum = 0; for (let s = 0; s <= W; s++) cum += ways[s];
+    p = Math.min(1, 2 * cum / 2 ** n); method = 'eksak';
+  } else {
+    const mu = n * (n + 1) / 4;
+    const tieAdj = sum(ties.map(t => t ** 3 - t)) / 48;
+    const sig = Math.sqrt(n * (n + 1) * (2 * n + 1) / 24 - tieAdj);
+    const z = Math.max(0, Math.abs(Wp - mu) - 0.5) / sig; // koreksi kontinuitas
+    p = pZ2(z); method = 'aproksimasi normal';
+  }
+  return { n, Wp, Wm, W, p, method, zeros: x1.length - n };
+}
+function welchT(a, b) {
+  const n1 = a.length, n2 = b.length, m1 = mean(a), m2 = mean(b), v1 = variance(a), v2 = variance(b);
+  const se2 = v1 / n1 + v2 / n2, t = (m1 - m2) / Math.sqrt(se2);
+  const df = se2 ** 2 / ((v1 / n1) ** 2 / (n1 - 1) + (v2 / n2) ** 2 / (n2 - 1));
+  const p = se2 === 0 ? (m1 === m2 ? 1 : 0) : pT2(t, df), tc = tCrit(df);
+  const sp = Math.sqrt(((n1 - 1) * v1 + (n2 - 1) * v2) / (n1 + n2 - 2));
+  return { n1, n2, m1, m2, v1, v2, t, df, p, diff: m1 - m2, ci: [(m1 - m2) - tc * Math.sqrt(se2), (m1 - m2) + tc * Math.sqrt(se2)], d: (m1 - m2) / sp };
+}
+function mannWhitney(a, b) {
+  const n1 = a.length, n2 = b.length, N = n1 + n2;
+  const { ranks, ties } = rankAvg([...a, ...b]);
+  const R1 = sum(ranks.slice(0, n1)), U1 = R1 - n1 * (n1 + 1) / 2, U2 = n1 * n2 - U1;
+  const mu = n1 * n2 / 2, tieAdj = sum(ties.map(t => t ** 3 - t)) / (N * (N - 1));
+  const sig = Math.sqrt(n1 * n2 / 12 * ((N + 1) - tieAdj));
+  const z = sig === 0 ? 0 : Math.max(0, Math.abs(U1 - mu) - 0.5) / sig; // koreksi kontinuitas
+  return { n1, n2, U1, U2, U: Math.min(U1, U2), z, p: pZ2(z), rbc: 2 * U1 / (n1 * n2) - 1 };
+}
+function corrCoef(x, y) { // Pearson
+  const n = x.length, mx = mean(x), my = mean(y);
+  let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; }
+  if (sxx === 0 || syy === 0) return null;
+  return Math.max(-1, Math.min(1, sxy / Math.sqrt(sxx * syy)));
+}
+function corrTest(x, y, kind) {
+  const n = x.length;
+  const xx = kind === 'spearman' ? rankAvg(x).ranks : x, yy = kind === 'spearman' ? rankAvg(y).ranks : y;
+  const r = corrCoef(xx, yy);
+  need(r !== null, 'Salah satu variabel bernilai konstan (semua sama), korelasi tidak dapat dihitung.');
+  const df = n - 2, p = Math.abs(r) >= 1 ? 0 : pT2(r * Math.sqrt(df / (1 - r * r)), df);
+  let ci = null; if (n > 3 && Math.abs(r) < 1) { const z = Math.atanh(r), se = 1 / Math.sqrt(n - 3); ci = [Math.tanh(z - 1.959964 * se), Math.tanh(z + 1.959964 * se)]; }
+  return { r, p, n, df, ci, r2: r * r };
+}
+function strength(r) { const a = Math.abs(r); return a < .2 ? 'sangat lemah' : a < .4 ? 'lemah' : a < .6 ? 'sedang' : a < .8 ? 'kuat' : 'sangat kuat'; }
+
+/* ---- aljabar matriks & regresi OLS (persamaan normal) ---- */
+function solveLinear(A, b) { // eliminasi Gauss + pivot parsial  (setara np.linalg.solve)
+  const n = A.length, M = A.map((r, i) => [...r, b[i]]);
+  for (let c = 0; c < n; c++) {
+    let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+    if (Math.abs(M[piv][c]) < 1e-10) throw new UserError('Matriks XᵀX singular: ada variabel independen yang saling berkorelasi sempurna (multikolinearitas sempurna) atau konstan. Hapus salah satu variabel yang redundan.');
+    [M[c], M[piv]] = [M[piv], M[c]];
+    for (let r = c + 1; r < n; r++) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  const x = new Array(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) { let s = M[i][n]; for (let j = i + 1; j < n; j++) s -= M[i][j] * x[j]; x[i] = s / M[i][i]; }
+  return x;
+}
+function invertMatrix(A) { // Gauss-Jordan
+  const n = A.length, M = A.map((r, i) => [...r, ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))]);
+  for (let c = 0; c < n; c++) {
+    let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+    if (Math.abs(M[piv][c]) < 1e-10) throw new UserError('Matriks XᵀX singular (multikolinearitas sempurna).');
+    [M[c], M[piv]] = [M[piv], M[c]];
+    const pv = M[c][c]; for (let k = 0; k < 2 * n; k++) M[c][k] /= pv;
+    for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c]; if (f !== 0) for (let k = 0; k < 2 * n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  return M.map(r => r.slice(n));
+}
+function olsFit(Xcols, y) { // Xcols: array kolom prediktor (tanpa intersep)
+  const n = y.length, k = Xcols.length, p = k + 1;
+  const X = Array.from({ length: n }, (_, i) => [1, ...Xcols.map(c => c[i])]);       // matriks desain
+  const XtX = Array.from({ length: p }, () => new Array(p).fill(0)), Xty = new Array(p).fill(0);
+  for (let i = 0; i < n; i++) for (let a = 0; a < p; a++) { Xty[a] += X[i][a] * y[i]; for (let b = 0; b < p; b++) XtX[a][b] += X[i][a] * X[i][b]; }
+  // penskalaan kolom hanya demi kestabilan numerik (hasil akhir dikembalikan ke skala asli)
+  const s = XtX.map((r, i) => Math.sqrt(r[i]));
+  const A = XtX.map((r, i) => r.map((v, j) => v / (s[i] * s[j]))), bs = Xty.map((v, i) => v / s[i]);
+  const bScaled = solveLinear(A, bs);                                                 // (XᵀX)β = Xᵀy
+  const beta = bScaled.map((v, i) => v / s[i]);
+  const AI = invertMatrix(A), XtXinv = AI.map((r, i) => r.map((v, j) => v / (s[i] * s[j])));
+  const fitted = X.map(r => sum(r.map((v, j) => v * beta[j]))), resid = y.map((v, i) => v - fitted[i]);
+  const my = mean(y), SSE = sum(resid.map(e => e * e)), SST = sum(y.map(v => (v - my) ** 2)), SSR = SST - SSE;
+  const dfE = n - p, MSE = SSE / dfE, R2 = SST === 0 ? 0 : 1 - SSE / SST, adjR2 = 1 - (1 - R2) * (n - 1) / dfE;
+  const F = (SSR / k) / MSE, pFv = MSE === 0 ? 0 : pF(F, k, dfE);
+  const se = beta.map((_, j) => Math.sqrt(Math.max(0, MSE * XtXinv[j][j])));
+  const t = beta.map((b, j) => b / se[j]), pv = t.map(tt => (isFinite(tt) ? pT2(tt, dfE) : 0));
+  return { n, k, p, beta, se, t, pv, fitted, resid, SSE, SST, SSR, dfE, MSE, rmse: Math.sqrt(MSE), R2, adjR2, F, pF: pFv, XtX, Xty, XtXinv };
+}
+function vifOf(Xcols) { // VIF_j = 1 / (1 − R²_j)
+  if (Xcols.length < 2) return [NaN];
+  return Xcols.map((c, j) => {
+    const others = Xcols.filter((_, i) => i !== j);
+    try { const f = olsFit(others, c); return f.R2 >= 0.99999999 ? Infinity : 1 / (1 - f.R2); } catch (e) { return Infinity; }
+  });
+}
+
+/* =====================================================================
+   BAGIAN E — PARSING FILE (CSV & XLSX, tanpa library eksternal)
+   ===================================================================== */
+function parseNum(v) {
+  if (v === null || v === undefined) return NaN;
+  if (typeof v === 'number') return v;
+  let s = String(v).trim().replace(/%$/, '').replace(/\s/g, '');
+  if (s === '' || s === '-' || s === '–' || /^(na|n\/a|nan|null|\.\.\.)$/i.test(s)) return NaN;
+  if (/^[+-]?\d{1,3}(\.\d{3}){2,}(,\d+)?$/.test(s) || /^[+-]?\d{1,3}(\.\d{3})+,\d+$/.test(s)) s = s.replace(/\./g, '').replace(',', '.'); // 1.234.567,8
+  else if (/^[+-]?\d+,\d+$/.test(s)) s = s.replace(',', '.');                                                                       // 72,5
+  else if (/^[+-]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');                                                     // 1,234.5
+  return /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s) ? Number(s) : NaN;
+}
+function parseCSV(text) {
+  text = text.replace(/^﻿/, '');
+  const first = text.split(/\r?\n/).find(l => l.trim() !== '') || '';
+  const cnt = ch => first.split(ch).length - 1;
+  const delim = [',', ';', '\t'].sort((a, b) => cnt(b) - cnt(a))[0];
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === delim) { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+async function readZip(buf) { // pembaca ZIP minimal: central directory + DecompressionStream
+  const u8 = new Uint8Array(buf), dv = new DataView(buf);
+  let eocd = -1; for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  need(eocd >= 0, 'File ini bukan berkas .xlsx yang valid (struktur ZIP tidak ditemukan). Pastikan formatnya .xlsx, bukan .xls lama.');
+  const n = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+  const entries = {}, dec = new TextDecoder();
+  for (let i = 0; i < n; i++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), el = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lho = dv.getUint32(p + 42, true);
+    entries[dec.decode(u8.subarray(p + 46, p + 46 + nl))] = { method, csize, lho };
+    p += 46 + nl + el + cl;
+  }
+  return {
+    names: Object.keys(entries),
+    async text(name) {
+      const e = entries[name]; if (!e) return null;
+      const nl = dv.getUint16(e.lho + 26, true), el = dv.getUint16(e.lho + 28, true), st = e.lho + 30 + nl + el, data = u8.subarray(st, st + e.csize);
+      if (e.method === 0) return dec.decode(data);
+      need(e.method === 8, 'Metode kompresi XLSX tidak didukung.');
+      need(typeof DecompressionStream !== 'undefined', 'Browser ini terlalu lama untuk membaca .xlsx langsung. Gunakan Chrome/Edge/Firefox/Safari versi terbaru, atau simpan data sebagai .csv.');
+      const out = await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+      return dec.decode(out);
+    }
+  };
+}
+const colIdx = ref => { let n = 0; for (const ch of ref.replace(/[0-9]/g, '')) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+async function xlsxOpen(buf) {
+  const zip = await readZip(buf);
+  need(zip.names.includes('xl/workbook.xml'), 'Berkas ini tidak berisi workbook Excel yang valid.');
+  const xml = async n => { const t = await zip.text(n); return t ? new DOMParser().parseFromString(t, 'application/xml') : null; };
+  const wb = await xml('xl/workbook.xml'), rels = await xml('xl/_rels/workbook.xml.rels');
+  const relMap = {}; if (rels) [...rels.getElementsByTagName('Relationship')].forEach(r => relMap[r.getAttribute('Id')] = r.getAttribute('Target'));
+  const sheets = [...wb.getElementsByTagName('sheet')].map((s, i) => {
+    let t = relMap[s.getAttribute('r:id')] || `worksheets/sheet${i + 1}.xml`;
+    t = t.startsWith('/') ? t.slice(1) : 'xl/' + t.replace(/^\.\//, '');
+    return { name: s.getAttribute('name'), path: t };
+  });
+  let shared = [];
+  const ss = await xml('xl/sharedStrings.xml');
+  if (ss) shared = [...ss.getElementsByTagName('si')].map(si => [...si.getElementsByTagName('t')].filter(t => t.parentNode.nodeName !== 'rPh').map(t => t.textContent).join(''));
+  return { zip, sheets, shared, xml };
+}
+async function xlsxSheetRows(wbk, sheetIdx) {
+  const doc = await wbk.xml(wbk.sheets[sheetIdx].path);
+  need(doc, 'Lembar Excel tidak dapat dibaca.');
+  const rows = [];
+  for (const rEl of doc.getElementsByTagName('row')) {
+    const arr = [];
+    for (const c of rEl.getElementsByTagName('c')) {
+      const ref = c.getAttribute('r'), ci = ref ? colIdx(ref) : arr.length, t = c.getAttribute('t'), vEl = c.getElementsByTagName('v')[0];
+      let val = null;
+      if (t === 'inlineStr') val = [...c.getElementsByTagName('t')].map(x => x.textContent).join('');
+      else if (vEl) { const raw = vEl.textContent; val = t === 's' ? wbk.shared[+raw] : (t === 'str' || t === 'e') ? raw : t === 'b' ? (raw === '1' ? 'TRUE' : 'FALSE') : Number(raw); }
+      arr[ci] = val;
+    }
+    rows.push(Array.from(arr, v => (v === undefined ? null : v)));
+  }
+  return rows;
+}
+
+/* =====================================================================
+   BAGIAN F — DATA CONTOH (DUMMY)
+   ===================================================================== */
+function sampleData() {
+  // [nama, kategori, IPM 2024, RLS 2024, %miskin 2024, penduduk]  — nilai ILUSTRASI (dummy), bukan data resmi
+  const B = [
+    ['Kab. Pacitan','Kabupaten',70.9,7.6,11.9,590000],['Kab. Ponorogo','Kabupaten',73.5,7.9,9.2,960000],['Kab. Trenggalek','Kabupaten',72.9,8.0,10.5,735000],
+    ['Kab. Tulungagung','Kabupaten',75.6,8.9,6.5,1100000],['Kab. Blitar','Kabupaten',74.0,8.2,8.5,1200000],['Kab. Kediri','Kabupaten',74.3,8.3,10.3,1650000],
+    ['Kab. Malang','Kabupaten',74.5,8.0,10.2,2700000],['Kab. Lumajang','Kabupaten',70.2,7.0,9.6,1100000],['Kab. Jember','Kabupaten',70.3,7.2,9.8,2500000],
+    ['Kab. Banyuwangi','Kabupaten',72.8,7.6,7.7,1700000],['Kab. Bondowoso','Kabupaten',68.8,6.6,13.1,780000],['Kab. Situbondo','Kabupaten',68.9,6.7,12.0,690000],
+    ['Kab. Probolinggo','Kabupaten',67.9,6.5,17.0,1200000],['Kab. Pasuruan','Kabupaten',71.0,7.7,9.4,1600000],['Kab. Sidoarjo','Kabupaten',82.0,10.7,4.2,2200000],
+    ['Kab. Mojokerto','Kabupaten',75.2,8.9,9.4,1100000],['Kab. Jombang','Kabupaten',75.0,8.5,8.9,1350000],['Kab. Nganjuk','Kabupaten',73.8,7.9,10.7,1100000],
+    ['Kab. Madiun','Kabupaten',72.7,7.6,11.0,690000],['Kab. Magetan','Kabupaten',76.0,8.9,9.3,680000],['Kab. Ngawi','Kabupaten',72.1,7.4,12.5,860000],
+    ['Kab. Bojonegoro','Kabupaten',71.1,7.3,12.9,1300000],['Kab. Tuban','Kabupaten',71.2,7.2,13.5,1200000],['Kab. Lamongan','Kabupaten',74.7,8.3,12.9,1400000],
+    ['Kab. Gresik','Kabupaten',78.3,9.9,11.9,1300000],['Kab. Bangkalan','Kabupaten',66.7,6.1,18.9,1100000],['Kab. Sampang','Kabupaten',66.9,5.2,21.5,990000],
+    ['Kab. Pamekasan','Kabupaten',69.7,6.9,13.2,880000],['Kab. Sumenep','Kabupaten',69.4,6.7,19.5,1100000],
+    ['Kota Kediri','Kota',79.7,10.8,5.3,290000],['Kota Blitar','Kota',79.5,10.7,6.6,150000],['Kota Malang','Kota',84.6,11.1,4.2,850000],
+    ['Kota Probolinggo','Kota',77.4,9.7,6.8,240000],['Kota Pasuruan','Kota',78.0,9.6,6.9,210000],['Kota Mojokerto','Kota',80.0,10.8,5.2,135000],
+    ['Kota Madiun','Kota',82.1,11.4,4.0,200000],['Kota Surabaya','Kota',83.6,11.2,4.5,2900000],['Kota Batu','Kota',78.9,9.6,3.9,215000]];
+  let seed = 20250101; const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const nrm = () => (rnd() + rnd() + rnd() - 1.5) * 2;
+  const headers = ['Wilayah', 'Kategori', 'Tahun', 'IPM', 'Rata_Lama_Sekolah', 'Persen_Penduduk_Miskin', 'Jumlah_Penduduk'];
+  const rows = [];
+  B.forEach(b => rows.push([b[0], b[1], 2024, b[2], b[3], b[4], b[5]]));
+  B.forEach(b => rows.push([b[0], b[1], 2025, +(b[2] + 0.6 + 0.25 * nrm()).toFixed(2), +(b[3] + 0.12 + 0.06 * nrm()).toFixed(2),
+    +Math.max(1, b[4] - 0.45 + 0.3 * nrm()).toFixed(2), Math.round(b[5] * (1.008 + 0.003 * nrm()))]));
+  return { headers, rows };
+}
+
+/* =====================================================================
+   BAGIAN G — STATE, DATA & KONFIGURASI
+   ===================================================================== */
+const S = { name: '', headers: [], rows: [], cols: [], cfg: null, wbk: null, report: {}, last: {} };
+
+function showMsg(el, type, html) { el.innerHTML = html ? `<div class="alert ${type}">${html}</div>` : ''; }
+
+function loadTable(headers, rows, name) {
+  // bersihkan baris kosong & kolom kosong
+  rows = rows.filter(r => r.some(v => v !== null && v !== undefined && String(v).trim() !== ''));
+  need(headers.length > 0 && rows.length > 0, 'Tidak ada data yang bisa dibaca. Pastikan baris pertama berisi nama kolom dan ada minimal satu baris data.');
+  const seen = {};
+  headers = headers.map((h, i) => { h = (h === null || h === undefined || String(h).trim() === '') ? `Kolom_${i + 1}` : String(h).trim(); if (seen[h]) { seen[h]++; h = `${h}_${seen[h]}`; } else seen[h] = 1; return h; });
+  rows = rows.map(r => headers.map((_, i) => (r[i] === undefined ? null : r[i])));
+  S.name = name; S.headers = headers; S.rows = rows; S.cfg = null; S.report = {}; S.last = {};
+  S.cols = headers.map((h, i) => {
+    const vals = rows.map(r => r[i]).filter(v => v !== null && String(v).trim() !== '');
+    const numeric = vals.filter(v => isFinite(parseNum(v))).length;
+    return { name: h, idx: i, nonEmpty: vals.length, missing: rows.length - vals.length,
+      type: vals.length > 0 && numeric / vals.length >= 0.9 ? 'num' : 'txt', uniq: new Set(vals.map(v => String(v).trim())).size };
+  });
+  renderPreview(); renderConfig();
+  $('#secAn').hidden = true; $('#secCfg').hidden = false;
+  $$('.results').forEach(r => r.innerHTML = '');
+  S.last = {};
+  $('#secCfg').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderPreview() {
+  $('#preview').hidden = false;
+  $('#fileInfo').textContent = `— ${S.name}: ${S.rows.length} baris × ${S.headers.length} kolom`;
+  $('#colChips').innerHTML = S.cols.map(c => `<span class="chip" title="${c.missing} sel kosong · ${c.uniq} nilai unik">${esc(c.name)}<span class="tag ${c.type}">${c.type === 'num' ? 'numerik' : 'teks'}</span></span>`).join('');
+  const show = S.rows.slice(0, 10);
+  $('#prevTable').innerHTML = `<table><thead><tr>${S.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${show.map(r => `<tr>${r.map(v => `<td>${v === null ? '' : esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>` +
+    (S.rows.length > 10 ? `<div class="sub" style="padding:6px 10px">… menampilkan 10 dari ${S.rows.length} baris</div>` : '');
+}
+
+function guessConfig() {
+  const nameRe = (c, re) => re.test(c.name);
+  const txt = S.cols.filter(c => c.type === 'txt');
+  const yearC = S.cols.find(c => nameRe(c, /^(tahun|year|periode|period|thn)$/i)) ||
+    S.cols.find(c => c.type === 'num' && c.uniq >= 2 && c.uniq <= 12 && S.rows.every(r => { const v = parseNum(r[c.idx]); return isNaN(v) || (Number.isInteger(v) && v >= 1900 && v <= 2100); }) && c.nonEmpty > 0);
+  const idC = S.cols.find(c => nameRe(c, /wilayah|kabupaten|kab[._/ ]?kota|kota|nama|daerah|region|area/i) && c.type === 'txt') ||
+    txt.sort((a, b) => b.uniq - a.uniq)[0] || S.cols[0];
+  const catC = S.cols.find(c => c !== idC && c.type === 'txt' && c.uniq >= 2 && c.uniq <= 6 && c.uniq < S.rows.length / 2 && nameRe(c, /kategori|kelompok|jenis|tipe|type|kelas|status|group/i)) ||
+    S.cols.find(c => c !== idC && c.type === 'txt' && c.uniq >= 2 && c.uniq <= 6 && c.uniq < S.rows.length / 2);
+  return { id: idC.idx, cat: catC ? catC.idx : -1, year: yearC ? yearC.idx : -1 };
+}
+
+function uniqueVals(ci) {
+  const vals = [...new Set(S.rows.map(r => r[ci]).filter(v => v !== null && String(v).trim() !== '').map(v => String(v).trim()))];
+  return vals.every(v => isFinite(parseNum(v))) ? vals.sort((a, b) => parseNum(a) - parseNum(b)) : vals.sort();
+}
+
+function renderConfig() {
+  const g = guessConfig();
+  const opts = (sel, withNone) => (withNone ? '<option value="-1">(tidak ada)</option>' : '') + S.cols.map(c => `<option value="${c.idx}">${esc(c.name)} ${c.type === 'num' ? '[numerik]' : '[teks]'}</option>`).join('');
+  $('#cId').innerHTML = opts(null, false); $('#cCat').innerHTML = opts(null, true); $('#cYear').innerHTML = opts(null, true);
+  $('#cId').value = g.id; $('#cCat').value = g.cat; $('#cYear').value = g.year;
+  refreshYearAndVars(true);
+  showMsg($('#cfgMsg'), '', '');
+}
+function refreshYearAndVars(initial) {
+  const y = +$('#cYear').value, hasY = y >= 0;
+  ['wP1', 'wP2', 'wPer'].forEach(id => $('#' + id).hidden = !hasY);
+  if (hasY) {
+    const u = uniqueVals(y), o = u.map(v => `<option>${esc(v)}</option>`).join('');
+    const keep = [$('#cP1').value, $('#cP2').value, $('#cPer').value];
+    $('#cP1').innerHTML = o; $('#cP2').innerHTML = o;
+    $('#cP1').value = u.includes(keep[0]) ? keep[0] : u[0]; $('#cP2').value = u.includes(keep[1]) ? keep[1] : u[u.length - 1];
+    syncPer(keep[2]);
+  }
+  const prev = initial ? null : $$('#cVars input:checked').map(i => +i.value);
+  const excl = new Set([+$('#cId').value, +$('#cCat').value, +$('#cYear').value]);
+  const nums = S.cols.filter(c => c.type === 'num' && !excl.has(c.idx));
+  $('#cVars').innerHTML = nums.length ? nums.map(c => `<label class="chip ${(prev ? prev.includes(c.idx) : true) ? 'on' : ''}"><input type="checkbox" value="${c.idx}" ${(prev ? prev.includes(c.idx) : true) ? 'checked' : ''}>${esc(c.name)}</label>`).join('')
+    : '<span class="sub">Tidak ada kolom numerik yang tersedia.</span>';
+}
+function syncPer(keep) {
+  if (+$('#cYear').value < 0) return;
+  const a = $('#cP1').value, b = $('#cP2').value;
+  $('#cPer').innerHTML = `<option value="${esc(b)}">Periode 2 (${esc(b)})</option><option value="${esc(a)}">Periode 1 (${esc(a)})</option>`;
+}
+
+function applyConfig() {
+  const msg = $('#cfgMsg');
+  try {
+    const id = +$('#cId').value, cat = +$('#cCat').value, year = +$('#cYear').value;
+    const vars = $$('#cVars input:checked').map(i => +i.value);
+    const alpha = parseFloat($('#cAlpha').value);
+    need(isFinite(alpha) && alpha > 0 && alpha < 1, 'Nilai α harus berupa angka antara 0 dan 1 (mis. 0,05).');
+    need(S.cols[id], 'Pilih kolom identifier wilayah.');
+    need(vars.length >= 1, 'Pilih minimal satu kolom numerik untuk dianalisis.');
+    need(!vars.includes(id) && !vars.includes(cat) && !vars.includes(year), 'Kolom identifier/kategori/tahun tidak boleh sekaligus dipilih sebagai variabel analisis.');
+    need(id !== cat || cat < 0, 'Kolom identifier dan kategori tidak boleh sama.');
+    need(id !== year || year < 0, 'Kolom identifier dan tahun tidak boleh sama.');
+    vars.forEach(v => need(S.cols[v].type === 'num', `Kolom “${S.cols[v].name}” bukan numerik sehingga tidak dapat dianalisis.`));
+    let p1 = null, p2 = null, per = null;
+    if (year >= 0) {
+      p1 = $('#cP1').value; p2 = $('#cP2').value; per = $('#cPer').value;
+      need(p1 !== p2, 'Periode 1 dan Periode 2 harus berbeda. Pilih dua tahun/periode yang berlainan.');
+    }
+    S.cfg = { id, cat, year, p1, p2, per, vars, alpha };
+    const notes = [];
+    if (cat >= 0) { const u = uniqueVals(cat); if (u.length < 2) { notes.push(`Kolom kategori “${S.cols[cat].name}” hanya punya 1 nilai unik – uji kelompok independen tidak akan bisa dijalankan.`); } else if (u.length > 12) notes.push(`Kolom kategori punya ${u.length} nilai unik (cukup banyak) – pastikan ini memang kolom kelompok.`); }
+    const dupCheck = (year >= 0 ? [p1, p2] : [null]).map(pk => aggregate(pk).dup);
+    if (dupCheck.some(d => d > 0)) notes.push('Terdapat identifier wilayah ganda pada periode yang sama – nilainya dirata-ratakan per wilayah.');
+    S.cols.filter(c => vars.includes(c.idx) && c.missing > 0).forEach(c => notes.push(`Kolom “${c.name}” memiliki ${c.missing} sel kosong/non-numerik (baris tsb dilewati pada analisis yang memerlukannya).`));
+    showMsg(msg, notes.length ? 'warn' : 'ok', notes.length ? '⚠ ' + notes.map(esc).join('<br>⚠ ') : '✅ Pengaturan valid. Silakan pilih metode analisis di bawah.');
+    buildControls();
+    $('#secAn').hidden = false;
+    $$('.results').forEach(r => r.innerHTML = ''); S.report = {}; S.last = {};
+    $('#secAn').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) { if (e instanceof UserError) showMsg(msg, 'err', '❌ ' + esc(e.message)); else { console.error(e); showMsg(msg, 'err', '❌ Kesalahan tak terduga: ' + esc(e.message)); } }
+}
+
+/* ---- akses data ---- */
+function aggregate(periodKey) { // rata-rata per wilayah (jika ada ID ganda) untuk satu periode
+  const { id, cat, year, vars } = S.cfg || { id: +$('#cId').value, cat: +$('#cCat').value, year: +$('#cYear').value, vars: $$('#cVars input:checked').map(i => +i.value) };
+  const map = new Map(); let dup = 0;
+  for (const r of S.rows) {
+    if (year >= 0 && periodKey !== null && String(r[year]).trim() !== periodKey) continue;
+    const key = r[id] === null ? '' : String(r[id]).trim(); if (!key) continue;
+    let e = map.get(key);
+    if (!e) { e = { id: key, cat: null, s: {}, c: {} }; map.set(key, e); } else dup++;
+    if (cat >= 0 && e.cat === null && r[cat] !== null && String(r[cat]).trim() !== '') e.cat = String(r[cat]).trim();
+    vars.forEach(v => { const x = parseNum(r[v]); if (isFinite(x)) { e.s[v] = (e.s[v] || 0) + x; e.c[v] = (e.c[v] || 0) + 1; } });
+  }
+  return { dup, list: [...map.values()], get: (e, v) => (e.c[v] ? e.s[v] / e.c[v] : NaN) };
+}
+function crossData(varIdx) { // data lintas wilayah (periode terpilih), buang baris dengan NaN pada variabel yang dipakai
+  const cfg = S.cfg, ag = aggregate(cfg.year >= 0 ? cfg.per : null);
+  const ids = [], cats = [], cols = varIdx.map(() => []);
+  let dropped = 0;
+  for (const e of ag.list) {
+    const vals = varIdx.map(v => ag.get(e, v));
+    if (vals.some(x => !isFinite(x))) { dropped++; continue; }
+    ids.push(e.id); cats.push(e.cat); vals.forEach((x, i) => cols[i].push(x));
+  }
+  return { ids, cats, cols, n: ids.length, dropped, period: cfg.year >= 0 ? cfg.per : null };
+}
+function pairData(v) {
+  const cfg = S.cfg;
+  need(cfg.year >= 0, 'Uji berpasangan memerlukan kolom tahun/periode. Atur “Kolom tahun” dan Periode 1 & 2 di langkah 2, lalu klik “Terapkan”.');
+  const a1 = aggregate(cfg.p1), a2 = aggregate(cfg.p2), m2 = new Map(a2.list.map(e => [e.id, e]));
+  const ids = [], cats = [], x1 = [], x2 = []; let dropped = 0;
+  for (const e of a1.list) {
+    const f = m2.get(e.id); if (!f) { dropped++; continue; }
+    const u = a1.get(e, v), w = a2.get(f, v);
+    if (!isFinite(u) || !isFinite(w)) { dropped++; continue; }
+    ids.push(e.id); cats.push(e.cat || f.cat); x1.push(u); x2.push(w);
+  }
+  return { ids, cats, x1, x2, n: ids.length, dropped };
+}
+const vName = i => S.cols[i].name;
+
+/* =====================================================================
+   BAGIAN H — GRAFIK SVG (tanpa library)
+   ===================================================================== */
+const FONT = 'system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+const PAL = ['#2563eb', '#e11d48', '#059669', '#d97706', '#7c3aed', '#0891b2', '#65a30d', '#db2777'];
+const C1 = '#2563eb', C2 = '#f59e0b';
+const svgOpen = (w, h) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" font-family="${FONT}" role="img"><rect width="${w}" height="${h}" fill="#ffffff"/>`;
+function T(x, y, s, o = {}) {
+  return `<text x="${x}" y="${y}" font-size="${o.size || 11}" fill="${o.fill || '#374151'}" text-anchor="${o.anchor || 'start'}"${o.weight ? ` font-weight="${o.weight}"` : ''}${o.rot ? ` transform="rotate(${o.rot} ${x} ${y})"` : ''}>${esc(s)}</text>`;
+}
+const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+function ticksOf(lo, hi, n = 5) {
+  const span = hi - lo || 1, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw)), nm = raw / mag, step = (nm < 1.5 ? 1 : nm < 3 ? 2 : nm < 7 ? 5 : 10) * mag;
+  const out = []; for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + step * 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function tf(v) { const a = Math.abs(v); if (a >= 10000) return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return String(+v.toFixed(6)).replace('.', ','); }
+function domOf(vals, zero) {
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (lo === hi) { lo -= 1; hi += 1; }
+  const pad = (hi - lo) * 0.06; return zero ? [0, hi + pad] : [lo - pad, hi + pad];
+}
+function legend(items, x, y) { // items: [{label,color}]
+  let s = '', cx = x; items.forEach(it => { s += `<rect x="${cx}" y="${y - 9}" width="11" height="11" rx="2" fill="${it.color}"/>` + T(cx + 15, y, it.label, { size: 11 }); cx += 24 + it.label.length * 6.2; });
+  return s;
+}
+function chartCard(title, svg, file) {
+  return `<figure class="chart"><div class="ch"><span>${esc(title)}</span><button class="btn sm sec" data-dl="${esc(file)}">⬇ Simpan PNG</button></div>${svg}</figure>`;
+}
+
+function boxSVG(title, groups) { // boxplot horizontal; groups: [{label, values, labels, color}]
+  const W = 720, rowH = 64, ml = 150, mr = 24, mt = 40, mb = 40, H = mt + groups.length * rowH + mb;
+  const [lo, hi] = domOf(groups.flatMap(g => g.values)), sx = v => ml + (v - lo) / (hi - lo) * (W - ml - mr);
+  let s = svgOpen(W, H) + T(W / 2, 22, title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' });
+  ticksOf(lo, hi, 6).forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="${mt - 6}" y2="${H - mb}" stroke="#e5e7eb"/>` + T(sx(t), H - mb + 16, tf(t), { anchor: 'middle', size: 10 }); });
+  groups.forEach((g, i) => {
+    const cy = mt + i * rowH + rowH / 2, b = boxStats(g.values), col = g.color || C1;
+    s += `<line x1="${sx(b.wLo)}" x2="${sx(b.q1)}" y1="${cy}" y2="${cy}" stroke="${col}" stroke-width="1.5"/><line x1="${sx(b.q3)}" x2="${sx(b.wHi)}" y1="${cy}" y2="${cy}" stroke="${col}" stroke-width="1.5"/>`;
+    s += `<line x1="${sx(b.wLo)}" x2="${sx(b.wLo)}" y1="${cy - 7}" y2="${cy + 7}" stroke="${col}" stroke-width="1.5"/><line x1="${sx(b.wHi)}" x2="${sx(b.wHi)}" y1="${cy - 7}" y2="${cy + 7}" stroke="${col}" stroke-width="1.5"/>`;
+    s += `<rect x="${sx(b.q1)}" y="${cy - 14}" width="${Math.max(1, sx(b.q3) - sx(b.q1))}" height="28" fill="${col}" fill-opacity="0.2" stroke="${col}" stroke-width="1.5"/><line x1="${sx(b.median)}" x2="${sx(b.median)}" y1="${cy - 14}" y2="${cy + 14}" stroke="${col}" stroke-width="3"/>`;
+    g.values.forEach((v, j) => {
+      const out = v < b.fenceLo || v > b.fenceHi, jit = (((j * 37) % 17) / 17 - 0.5) * 20, lbl = g.labels ? g.labels[j] + ': ' : '';
+      s += `<circle cx="${sx(v)}" cy="${cy + (out ? 0 : jit)}" r="${out ? 4.2 : 2.4}" fill="${out ? '#dc2626' : col}" fill-opacity="${out ? 0.9 : 0.4}"><title>${esc(lbl + fv(v))}${out ? ' (outlier)' : ''}</title></circle>`;
+    });
+    s += T(ml - 10, cy - 1, trunc(g.label, 24), { anchor: 'end', size: 12, weight: 600 }) + T(ml - 10, cy + 13, `n = ${g.values.length}`, { anchor: 'end', size: 10, fill: '#6b7280' });
+  });
+  return s + '</svg>';
+}
+function rankSVG(title, items, avg, leg) { // items: [{label,value,color}] — diurutkan menurun
+  items = [...items].sort((a, b) => b.value - a.value);
+  const W = 720, rowH = 19, ml = 150, mr = 64, mt = 52, mb = 34, H = mt + items.length * rowH + mb, hiV = Math.max(...items.map(i => i.value), avg);
+  const tk = ticksOf(0, hiV * 1.04, 6), top = tk[tk.length - 1], sx = v => ml + v / top * (W - ml - mr);
+  let s = svgOpen(W, H) + T(W / 2, 20, title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' });
+  if (leg) s += legend(leg, ml, 40);
+  tk.forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="${mt - 4}" y2="${H - mb}" stroke="#e5e7eb"/>` + T(sx(t), H - mb + 15, tf(t), { anchor: 'middle', size: 10 }); });
+  items.forEach((it, i) => {
+    const y = mt + i * rowH;
+    s += `<rect x="${ml}" y="${y + 2}" width="${Math.max(0, sx(it.value) - ml)}" height="${rowH - 5}" fill="${it.color || C1}" fill-opacity="0.85"><title>${esc(it.label)}: ${fv(it.value)}</title></rect>`;
+    s += T(ml - 6, y + rowH - 6, trunc(it.label, 24), { anchor: 'end', size: 10.5 }) + T(sx(it.value) + 4, y + rowH - 6, fv(it.value), { size: 10, fill: '#374151' });
+  });
+  s += `<line x1="${sx(avg)}" x2="${sx(avg)}" y1="${mt - 8}" y2="${H - mb}" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="5,4"/>` + T(sx(avg), mt - 12, 'Rata-rata = ' + fv(avg), { anchor: 'middle', size: 11, fill: '#dc2626', weight: 700 });
+  return s + '</svg>';
+}
+function dumbSVG(title, items, l1, l2) { // items: [{label,a,b}] diurutkan menurun berdasar b
+  items = [...items].sort((x, y) => y.b - x.b);
+  const W = 720, rowH = 19, ml = 150, mr = 30, mt = 52, mb = 34, H = mt + items.length * rowH + mb;
+  const [lo, hi] = domOf(items.flatMap(i => [i.a, i.b])), sx = v => ml + (v - lo) / (hi - lo) * (W - ml - mr);
+  let s = svgOpen(W, H) + T(W / 2, 20, title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' }) + legend([{ label: l1, color: C1 }, { label: l2, color: C2 }], ml, 40);
+  ticksOf(lo, hi, 6).forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="${mt - 4}" y2="${H - mb}" stroke="#e5e7eb"/>` + T(sx(t), H - mb + 15, tf(t), { anchor: 'middle', size: 10 }); });
+  items.forEach((it, i) => {
+    const cy = mt + i * rowH + rowH / 2;
+    s += `<line x1="${sx(it.a)}" x2="${sx(it.b)}" y1="${cy}" y2="${cy}" stroke="#9ca3af" stroke-width="2"/><circle cx="${sx(it.a)}" cy="${cy}" r="4.5" fill="${C1}"><title>${esc(it.label)} ${esc(l1)}: ${fv(it.a)}</title></circle><circle cx="${sx(it.b)}" cy="${cy}" r="4.5" fill="${C2}"><title>${esc(it.label)} ${esc(l2)}: ${fv(it.b)}</title></circle>`;
+    s += T(ml - 8, cy + 3.5, trunc(it.label, 24), { anchor: 'end', size: 10.5 });
+  });
+  return s + '</svg>';
+}
+function barCmpSVG(title, vars, l1, l2) { // vars: [{name,m1,m2}] panel kecil per variabel
+  const pw = 180, ph = 250, cols = Math.min(4, vars.length), rows = Math.ceil(vars.length / cols), W = Math.max(360, cols * pw + 20), H = 34 + rows * ph;
+  let s = svgOpen(W, H) + T(W / 2, 20, title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' });
+  vars.forEach((v, i) => {
+    const ox = 10 + (i % cols) * pw, oy = 34 + Math.floor(i / cols) * ph, ml = 54, bw = 38, top = Math.max(v.m1, v.m2) * 1.18, tk = ticksOf(0, top, 4), tt = tk[tk.length - 1];
+    const by = val => oy + 190 - val / tt * 140;
+    s += T(ox + pw / 2, oy + 12, trunc(v.name, 24), { anchor: 'middle', size: 12, weight: 700, fill: '#111827' });
+    tk.forEach(t => { s += `<line x1="${ox + ml - 6}" x2="${ox + pw - 8}" y1="${by(t)}" y2="${by(t)}" stroke="#e5e7eb"/>` + T(ox + ml - 9, by(t) + 3, tf(t), { anchor: 'end', size: 9 }); });
+    [[v.m1, C1, l1, 0], [v.m2, C2, l2, 1]].forEach(([val, col, lab, k]) => {
+      const x = ox + ml + 8 + k * (bw + 12);
+      s += `<rect x="${x}" y="${by(val)}" width="${bw}" height="${oy + 190 - by(val)}" fill="${col}" rx="2"><title>${esc(lab)}: ${fv(val)}</title></rect>` + T(x + bw / 2, by(val) - 4, fv(val), { anchor: 'middle', size: 10, weight: 700 }) + T(x + bw / 2, oy + 205, lab, { anchor: 'middle', size: 10 });
+    });
+    const g = (v.m2 - v.m1) / v.m1 * 100;
+    s += T(ox + pw / 2, oy + 230, `${g >= 0 ? '▲' : '▼'} ${nf(Math.abs(g), 2)}%`, { anchor: 'middle', size: 12, weight: 700, fill: g >= 0 ? '#047857' : '#b91c1c' });
+  });
+  return s + '</svg>';
+}
+function scatterSVG(o) { // {title,xs,ys,labels,colors,xname,yname,line,identity,hline,leg}
+  const W = 720, H = 430, ml = 70, mr = 24, mt = 44, mb = 54;
+  let [xl, xh] = domOf(o.xs), [yl, yh] = domOf(o.ys);
+  if (o.identity) { xl = yl = Math.min(xl, yl); xh = yh = Math.max(xh, yh); }
+  if (o.hline !== undefined) { yl = Math.min(yl, o.hline - (yh - yl) * 0.05); yh = Math.max(yh, o.hline + (yh - yl) * 0.05); }
+  const sx = v => ml + (v - xl) / (xh - xl) * (W - ml - mr), sy = v => H - mb - (v - yl) / (yh - yl) * (H - mt - mb);
+  let s = svgOpen(W, H) + T(W / 2, 22, o.title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' });
+  if (o.leg) s += legend(o.leg, ml, 38);
+  ticksOf(xl, xh, 6).forEach(t => { s += `<line x1="${sx(t)}" x2="${sx(t)}" y1="${mt}" y2="${H - mb}" stroke="#eef0f3"/>` + T(sx(t), H - mb + 16, tf(t), { anchor: 'middle', size: 10 }); });
+  ticksOf(yl, yh, 6).forEach(t => { s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#eef0f3"/>` + T(ml - 8, sy(t) + 3, tf(t), { anchor: 'end', size: 10 }); });
+  s += `<line x1="${ml}" x2="${W - mr}" y1="${H - mb}" y2="${H - mb}" stroke="#9ca3af"/><line x1="${ml}" x2="${ml}" y1="${mt}" y2="${H - mb}" stroke="#9ca3af"/>`;
+  if (o.identity) s += `<line x1="${sx(xl)}" y1="${sy(yl)}" x2="${sx(xh)}" y2="${sy(yh)}" stroke="#6b7280" stroke-dasharray="6,4"/>`;
+  if (o.hline !== undefined) s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(o.hline)}" y2="${sy(o.hline)}" stroke="#6b7280" stroke-dasharray="6,4"/>`;
+  if (o.line) { const f = olsFit([o.xs], o.ys); s += `<line x1="${sx(xl)}" y1="${sy(f.beta[0] + f.beta[1] * xl)}" x2="${sx(xh)}" y2="${sy(f.beta[0] + f.beta[1] * xh)}" stroke="#dc2626" stroke-width="2"/>`; }
+  o.xs.forEach((x, i) => { s += `<circle cx="${sx(x)}" cy="${sy(o.ys[i])}" r="4.2" fill="${o.colors ? o.colors[i] : C1}" fill-opacity="0.65" stroke="#fff" stroke-width="0.8"><title>${esc((o.labels ? o.labels[i] + ' — ' : '') + `${o.xname}: ${fv(x)}, ${o.yname}: ${fv(o.ys[i])}`)}</title></circle>`; });
+  s += T((ml + W - mr) / 2, H - 12, o.xname, { anchor: 'middle', size: 12, weight: 600 }) + T(16, (mt + H - mb) / 2, o.yname, { anchor: 'middle', size: 12, weight: 600, rot: -90 });
+  return s + '</svg>';
+}
+function histSVG(title, vals, xname, zeroLine) {
+  const W = 720, H = 330, ml = 56, mr = 24, mt = 40, mb = 52, nb = Math.min(15, Math.max(5, Math.ceil(Math.log2(vals.length)) + 1));
+  let lo = Math.min(...vals), hi = Math.max(...vals); if (lo === hi) { lo -= 1; hi += 1; }
+  const bw = (hi - lo) / nb, cnt = new Array(nb).fill(0); vals.forEach(v => cnt[Math.min(nb - 1, Math.floor((v - lo) / bw))]++);
+  const mx = Math.max(...cnt), sx = v => ml + (v - lo) / (hi - lo) * (W - ml - mr), sy = c => H - mb - c / (mx * 1.1) * (H - mt - mb);
+  let s = svgOpen(W, H) + T(W / 2, 22, title, { anchor: 'middle', size: 14, weight: 700, fill: '#111827' });
+  ticksOf(lo, hi, 6).forEach(t => { s += T(sx(t), H - mb + 16, tf(t), { anchor: 'middle', size: 10 }); });
+  ticksOf(0, mx * 1.1, 4).forEach(t => { if (Number.isInteger(t)) s += `<line x1="${ml}" x2="${W - mr}" y1="${sy(t)}" y2="${sy(t)}" stroke="#eef0f3"/>` + T(ml - 8, sy(t) + 3, String(t), { anchor: 'end', size: 10 }); });
+  cnt.forEach((c, i) => { s += `<rect x="${sx(lo + i * bw) + 1}" y="${sy(c)}" width="${(W - ml - mr) / nb - 2}" height="${H - mb - sy(c)}" fill="${C1}" fill-opacity="0.7"><title>${c} wilayah</title></rect>`; });
+  s += `<line x1="${ml}" x2="${W - mr}" y1="${H - mb}" y2="${H - mb}" stroke="#9ca3af"/>`;
+  if (zeroLine && lo <= 0 && hi >= 0) s += `<line x1="${sx(0)}" x2="${sx(0)}" y1="${mt}" y2="${H - mb}" stroke="#6b7280" stroke-dasharray="5,4"/>` + T(sx(0), mt - 4, '0', { anchor: 'middle', size: 10 });
+  const m = mean(vals); s += `<line x1="${sx(m)}" x2="${sx(m)}" y1="${mt}" y2="${H - mb}" stroke="#dc2626" stroke-width="2"/>` + T(sx(m), mt + 12, 'rata-rata ' + fv(m), { anchor: m > (lo + hi) / 2 ? 'end' : 'start', size: 10, fill: '#dc2626', weight: 700 });
+  s += T((ml + W - mr) / 2, H - 12, xname, { anchor: 'middle', size: 12, weight: 600 }) + T(16, (mt + H - mb) / 2, 'Jumlah wilayah', { anchor: 'middle', size: 12, weight: 600, rot: -90 });
+  return s + '</svg>';
+}
+
+/* ---- ekspor PNG / teks ---- */
+function downloadBlob(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+function svgToPng(svgEl, name) {
+  const vb = svgEl.viewBox.baseVal, w = vb.width, h = vb.height, clone = svgEl.cloneNode(true);
+  clone.setAttribute('width', w); clone.setAttribute('height', h);
+  const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+  const img = new Image();
+  img.onload = () => { const c = document.createElement('canvas'); c.width = w * 2; c.height = h * 2; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height); c.toBlob(b => downloadBlob(b, name + '.png'), 'image/png'); };
+  img.onerror = () => alert('Gagal membuat gambar PNG dari grafik ini.');
+  img.src = url;
+}
+function copyText(txt) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt).then(() => true, () => false);
+  const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove(); return Promise.resolve(ok);
+}
+
+/* =====================================================================
+   BAGIAN I — KOMPONEN TAMPILAN HASIL
+   ===================================================================== */
+function tbl(head, rows, cls) { return `<div class="tw"><table class="${cls || ''}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+const badge = (p, a) => (p < a ? '<span class="badge ok">Signifikan</span>' : '<span class="badge ns">Tidak signifikan</span>');
+const decision = (p, a) => (p < a ? `p < α (${nf(a, 2)}) → H₀ ditolak` : `p ≥ α (${nf(a, 2)}) → H₀ gagal ditolak`);
+const interp = (paras) => `<div class="interp"><h4>💡 Interpretasi otomatis</h4>${paras.map(p => `<p>${p}</p>`).join('')}</div>`;
+const srcCode = (fns) => `<details><summary>🔍 Lihat kode JavaScript yang menghitung ini</summary><pre>${fns.map(f => esc(f.toString())).join('\n\n')}</pre></details>`;
+const formulaBox = (txt) => `<details><summary>📐 Rumus yang dipakai</summary><div class="formula">${esc(txt)}</div></details>`;
+const checkChips = (name, items, checked) => `<div class="chips" data-grp="${name}">${items.map(i => `<label class="chip ${checked(i) ? 'on' : ''}"><input type="checkbox" value="${i.v}" ${checked(i) ? 'checked' : ''}>${esc(i.t)}</label>`).join('')}</div>`;
+const selOpts = (items, sel) => items.map(i => `<option value="${i.v}" ${i.v === sel ? 'selected' : ''}>${esc(i.t)}</option>`).join('');
+const checked = grp => $$(`[data-grp="${grp}"] input:checked`).map(i => +i.value);
+
+function publish(tab, title, html, text) {
+  const el = $('#res-' + tab);
+  const stamp = new Date().toLocaleString('id-ID');
+  const full = `=== ${title} ===\nDijalankan: ${stamp}\nBerkas data: ${S.name}\nα = ${S.cfg.alpha}\n\n${text}`;
+  S.report[tab] = full; S.last[tab] = full;
+  el.innerHTML = `<div class="rtool"><h3>Hasil: ${esc(title)}</h3><div class="row"><button class="btn sm sec" data-copy="${tab}">📋 Salin ringkasan</button><button class="btn sm sec" data-txt="${tab}">⬇ Unduh ringkasan (.txt)</button></div></div>` + html;
+}
+function showError(tab, e) {
+  const el = $('#res-' + tab);
+  if (e instanceof UserError) el.innerHTML = `<div class="alert err">❌ ${esc(e.message)}</div>`;
+  else { console.error(e); el.innerHTML = `<div class="alert err">❌ Terjadi kesalahan tak terduga saat menghitung: ${esc(e.message)}. Periksa kembali data dan pilihan Anda.</div>`; }
+}
+const plainOf = h => h.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+/* =====================================================================
+   BAGIAN J — KONTROL TIAP TAB
+   ===================================================================== */
+function buildControls() {
+  const cfg = S.cfg, vi = cfg.vars.map(v => ({ v, t: vName(v) }));
+  const hasY = cfg.year >= 0, hasC = cfg.cat >= 0;
+  const note = (t, c) => `<div class="alert ${c || 'info'}">${t}</div>`;
+  const perInfo = hasY ? `Analisis lintas wilayah memakai data periode <b>${esc(cfg.per)}</b>.` : 'Analisis memakai seluruh baris data.';
+
+  $('#ctl-explore').innerHTML = `<label class="f">Variabel untuk boxplot &amp; statistik deskriptif</label>${checkChips('ex-vars', vi, () => true)}
+    <div class="grid" style="margin-top:10px"><label class="f">Variabel untuk ranking<select id="ex-rank">${selOpts(vi, vi[0].v)}</select></label>
+    ${hasY ? `<label class="f">Variabel untuk dumbbell plot (urut berdasar nilai periode 2)<select id="ex-dumb">${selOpts(vi, vi[0].v)}</select></label>` : ''}</div>
+    ${note(perInfo + (hasY ? '' : ' Dumbbell dan bar perbandingan periode dilewati karena kolom tahun belum diatur.'))}`;
+
+  $('#ctl-paired').innerHTML = hasY ? `<label class="f">Variabel yang diuji (bisa lebih dari satu)</label>${checkChips('pr-vars', vi, () => true)}
+    ${note(`Membandingkan <b>${esc(cfg.p1)}</b> (periode 1) dengan <b>${esc(cfg.p2)}</b> (periode 2) pada wilayah yang sama. Selisih = periode 2 − periode 1. α = <b>${nf(cfg.alpha, 3)}</b>.`)}`
+    : note('⚠ Uji berpasangan membutuhkan <b>kolom tahun/periode</b>. Kembali ke langkah 2, pilih kolom tahun dan dua periode, lalu klik “Terapkan”.', 'warn');
+
+  let catUi = '';
+  if (hasC) {
+    const u = uniqueVals(cfg.cat), cnt = {}; S.rows.forEach(r => { if (r[cfg.cat] !== null) { const k = String(r[cfg.cat]).trim(); cnt[k] = (cnt[k] || 0) + 1; } });
+    const sorted = [...u].sort((a, b) => cnt[b] - cnt[a]), it = u.map(x => ({ v: x, t: x }));
+    catUi = u.length < 2 ? note('⚠ Kolom kategori hanya memiliki satu nilai, uji tidak dapat dijalankan.', 'warn') :
+      `<label class="f">Variabel yang diuji</label>${checkChips('in-vars', vi, () => true)}
+       <div class="grid" style="margin-top:10px"><label class="f">Kelompok A<select id="in-a">${selOpts(it, sorted[0])}</select></label><label class="f">Kelompok B<select id="in-b">${selOpts(it, sorted[1])}</select></label></div>
+       ${note(perInfo + ' α = <b>' + nf(cfg.alpha, 3) + '</b>.' + (u.length > 2 ? ` Kolom kategori punya ${u.length} kelompok – pilih dua yang dibandingkan.` : ''))}`;
+  } else catUi = note('⚠ Uji kelompok independen membutuhkan <b>kolom kategori wilayah</b> (mis. Kabupaten/Kota). Kembali ke langkah 2, pilih kolom kategori, lalu klik “Terapkan”.', 'warn');
+  $('#ctl-indep').innerHTML = catUi;
+
+  $('#ctl-corr').innerHTML = vi.length < 2 ? note('⚠ Uji korelasi membutuhkan minimal <b>dua</b> variabel numerik. Pilih lebih banyak kolom numerik di langkah 2.', 'warn') :
+    `<div class="grid"><label class="f">Variabel X<select id="co-x">${selOpts(vi, vi[0].v)}</select></label><label class="f">Variabel Y<select id="co-y">${selOpts(vi, vi[1].v)}</select></label></div>
+     <label class="chip" style="margin-top:8px"><input type="checkbox" id="co-mat" checked> Tampilkan juga matriks korelasi semua variabel</label>
+     ${note(perInfo)}`;
+
+  $('#ctl-reg').innerHTML = vi.length < 2 ? note('⚠ Regresi membutuhkan minimal <b>dua</b> variabel numerik (1 dependen + 1 independen). Pilih lebih banyak kolom numerik di langkah 2.', 'warn') :
+    `<div class="grid"><label class="f">Variabel dependen (Y)<select id="rg-y">${selOpts(vi, vi[0].v)}</select></label></div>
+     <label class="f" style="margin-top:10px">Variabel independen (X) – pilih minimal satu</label>${checkChips('rg-x', vi, i => i.v !== vi[0].v)}
+     ${note(perInfo)}`;
+  // sinkronisasi: Y tidak boleh ikut jadi X
+  const ry = $('#rg-y'); if (ry) ry.onchange = () => { $$('[data-grp="rg-x"] input').forEach(i => { if (+i.value === +ry.value) { i.checked = false; i.parentElement.classList.remove('on'); } }); };
+  const cx = $('#co-x'), cy = $('#co-y'); if (cx) cx.onchange = cy.onchange = () => {};
+}
+
+/* =====================================================================
+   BAGIAN K — METODE 1: EKSPLORASI & VISUALISASI
+   ===================================================================== */
+function runExplore() {
+  const cfg = S.cfg, vs = checked('ex-vars');
+  need(vs.length > 0, 'Pilih minimal satu variabel untuk boxplot.');
+  const rv = +$('#ex-rank').value, hasY = cfg.year >= 0;
+  let html = '', txt = [];
+  const catColors = {}; if (cfg.cat >= 0) uniqueVals(cfg.cat).forEach((u, i) => catColors[u] = PAL[i % PAL.length]);
+
+  // --- 1. statistik deskriptif + boxplot
+  const descRows = [], box = [], notes = [], interps = [];
+  vs.forEach(v => {
+    const d = crossData([v]); need(d.n >= 3, `Variabel “${vName(v)}” hanya memiliki ${d.n} data valid (butuh minimal 3).`);
+    const vals = d.cols[0], b = boxStats(vals), outs = d.ids.filter((_, i) => vals[i] < b.fenceLo || vals[i] > b.fenceHi);
+    descRows.push([`<b>${esc(vName(v))}</b>`, d.n, fv(b.mean), fv(b.sd), fv(b.min), fv(b.q1), fv(b.median), fv(b.q3), fv(b.max), outs.length]);
+    const groups = [{ label: 'Semua wilayah', values: vals, labels: d.ids, color: C1 }];
+    if (cfg.cat >= 0) uniqueVals(cfg.cat).forEach(u => { const idx = d.cats.map((c, i) => (c === u ? i : -1)).filter(i => i >= 0); if (idx.length >= 3) groups.push({ label: u, values: idx.map(i => vals[i]), labels: idx.map(i => d.ids[i]), color: catColors[u] }); });
+    box.push(chartCard(`Boxplot ${vName(v)}`, boxSVG(`Boxplot — ${vName(v)}`, groups), `boxplot_${vName(v)}`));
+    if (d.dropped) notes.push(`${d.dropped} wilayah dilewati pada “${vName(v)}” karena nilainya kosong/non-numerik.`);
+    const hi = d.ids[vals.indexOf(b.max)], lo = d.ids[vals.indexOf(b.min)];
+    let t = `<b>${esc(vName(v))}</b>: rata-rata ${fv(b.mean)} (median ${fv(b.median)}), rentang ${fv(b.min)} (${esc(lo)}) – ${fv(b.max)} (${esc(hi)}). `;
+    t += Math.abs(b.mean - b.median) < 0.05 * (b.max - b.min) ? 'Rata-rata ≈ median → sebaran cenderung simetris. ' : (b.mean > b.median ? 'Rata-rata &gt; median → sebaran condong ke kanan (ada nilai tinggi yang menarik rata-rata). ' : 'Rata-rata &lt; median → sebaran condong ke kiri. ');
+    t += outs.length ? `Terdeteksi <b>${outs.length} outlier</b> (aturan 1,5×IQR): ${outs.slice(0, 6).map(esc).join(', ')}${outs.length > 6 ? ', …' : ''}.` : 'Tidak ada outlier menurut aturan 1,5×IQR.';
+    interps.push(t);
+    txt.push(`[Deskriptif] ${vName(v)}: n=${d.n}, mean=${fv(b.mean)}, sd=${fv(b.sd)}, min=${fv(b.min)}, Q1=${fv(b.q1)}, median=${fv(b.median)}, Q3=${fv(b.q3)}, max=${fv(b.max)}, outlier=${outs.length}${outs.length ? ' (' + outs.join(', ') + ')' : ''}`);
+  });
+  html += `<h3>① Statistik deskriptif &amp; boxplot${cfg.year >= 0 ? ` <small>(periode ${esc(cfg.per)})</small>` : ''}</h3>`;
+  html += tbl(['Variabel', 'n', 'Rata-rata', 'SD', 'Min', 'Q1', 'Median', 'Q3', 'Max', '#Outlier'], descRows);
+  if (notes.length) html += `<div class="alert warn">⚠ ${notes.map(esc).join('<br>⚠ ')}</div>`;
+  html += `<p class="sub">Cara membaca boxplot: kotak = 50% data tengah (Q1–Q3), garis tebal = median, kumis = rentang data wajar, titik merah = outlier. Titik kecil = tiap wilayah (arahkan kursor untuk nama).</p><div class="charts">${box.join('')}</div>` + interp(interps);
+
+  // --- 2. ranking
+  const dr = crossData([rv]); need(dr.n >= 2, `Variabel “${vName(rv)}” tidak punya cukup data valid untuk diranking.`);
+  const m = mean(dr.cols[0]);
+  const items = dr.ids.map((id, i) => ({ label: id, value: dr.cols[0][i], color: cfg.cat >= 0 && dr.cats[i] ? catColors[dr.cats[i]] : C1 }));
+  const leg = cfg.cat >= 0 ? Object.keys(catColors).map(k => ({ label: k, color: catColors[k] })) : null;
+  html += `<h3>② Ranking wilayah — ${esc(vName(rv))}</h3>` + chartCard(`Ranking ${vName(rv)}`, rankSVG(`Ranking ${vName(rv)}${cfg.year >= 0 ? ' (' + cfg.per + ')' : ''}`, items, m, leg), `ranking_${vName(rv)}`);
+  const sorted = [...items].sort((a, b) => b.value - a.value), above = items.filter(i => i.value > m).length;
+  const rk = `Pada <b>${esc(vName(rv))}</b>, peringkat 1 adalah <b>${esc(sorted[0].label)}</b> (${fv(sorted[0].value)}) dan terbawah <b>${esc(sorted[sorted.length - 1].label)}</b> (${fv(sorted[sorted.length - 1].value)}); selisih keduanya ${fv(sorted[0].value - sorted[sorted.length - 1].value)}. Sebanyak ${above} dari ${items.length} wilayah berada di atas rata-rata (${fv(m)}).`;
+  html += interp([rk]); txt.push(`[Ranking] ${plainOf(rk)}`);
+
+  // --- 3 & 4. perbandingan periode
+  if (hasY) {
+    const dv = +$('#ex-dumb').value, p = pairData(dv);
+    need(p.n >= 2, `Tidak cukup wilayah yang punya data di kedua periode untuk “${vName(dv)}”.`);
+    html += `<h3>③ Dumbbell plot — ${esc(vName(dv))}: ${esc(cfg.p1)} vs ${esc(cfg.p2)}</h3>` +
+      chartCard(`Dumbbell ${vName(dv)}`, dumbSVG(`${vName(dv)}: ${cfg.p1} → ${cfg.p2}`, p.ids.map((id, i) => ({ label: id, a: p.x1[i], b: p.x2[i] })), cfg.p1, cfg.p2), `dumbbell_${vName(dv)}`);
+    const diff = p.x2.map((v, i) => v - p.x1[i]), up = diff.filter(d => d > 0).length, dn = diff.filter(d => d < 0).length;
+    const imax = diff.indexOf(Math.max(...diff)), imin = diff.indexOf(Math.min(...diff));
+    const dt = `Dari ${p.n} wilayah, ${up} wilayah naik, ${dn} turun, ${p.n - up - dn} tetap. Perubahan terbesar: <b>${esc(p.ids[imax])}</b> (${diff[imax] >= 0 ? '+' : ''}${fv(diff[imax])}); terkecil/terendah: <b>${esc(p.ids[imin])}</b> (${diff[imin] >= 0 ? '+' : ''}${fv(diff[imin])}).`;
+    html += interp([dt]); txt.push(`[Dumbbell ${vName(dv)}] ${plainOf(dt)}`);
+    const cmp = vs.map(v => { const q = pairData(v); return q.n >= 1 ? { name: vName(v), m1: mean(q.x1), m2: mean(q.x2) } : null; }).filter(x => x && x.m1 > 0 && x.m2 > 0);
+    if (cmp.length) {
+      html += `<h3>④ Perbandingan rata-rata agregat: ${esc(cfg.p1)} vs ${esc(cfg.p2)}</h3>` + chartCard('Rata-rata antar periode', barCmpSVG('Rata-rata antar periode', cmp, cfg.p1, cfg.p2), 'bar_rata_rata_periode');
+      const bt = cmp.map(c => `${esc(c.name)}: ${fv(c.m1)} → ${fv(c.m2)} (${c.m2 >= c.m1 ? '+' : ''}${nf((c.m2 - c.m1) / c.m1 * 100, 2)}%)`);
+      html += interp(['Perubahan rata-rata antar periode — ' + bt.join('; ') + '. <i>Untuk memastikan apakah perubahan ini signifikan secara statistik, lanjutkan ke menu “Uji Berpasangan”.</i>']);
+      txt.push('[Rata-rata antar periode] ' + plainOf(bt.join('; ')));
+    } else html += `<div class="alert warn">Grafik ④ dilewati: tidak ada variabel bernilai positif yang punya data di kedua periode.</div>`;
+  } else html += `<div class="alert info">Grafik dumbbell dan perbandingan rata-rata periode dilewati karena kolom tahun belum diatur di langkah 2.</div>`;
+  txt.push(...interps.map(plainOf));
+  publish('explore', 'Eksplorasi & Visualisasi', html, txt.join('\n'));
+}
+
+/* =====================================================================
+   BAGIAN L — METODE 2: UJI BERPASANGAN
+   ===================================================================== */
+function runPaired() {
+  const cfg = S.cfg; need(cfg.year >= 0, 'Uji berpasangan memerlukan kolom tahun/periode. Atur di langkah 2 lalu klik “Terapkan”.');
+  const vs = checked('pr-vars'); need(vs.length > 0, 'Pilih minimal satu variabel yang akan diuji.');
+  const a = cfg.alpha, rows = [], paras = [], charts = [], txt = [], warns = [];
+  vs.forEach(v => {
+    const p = pairData(v);
+    need(p.n >= 3, `Variabel “${vName(v)}” hanya memiliki ${p.n} wilayah dengan data lengkap di kedua periode (butuh minimal 3). Periksa pilihan Periode 1 & 2 dan data kosong.`);
+    if (p.dropped) warns.push(`“${vName(v)}”: ${p.dropped} wilayah dilewati (tidak ada di salah satu periode atau nilainya kosong).`);
+    const t = pairedT(p.x1, p.x2), w = wilcoxonSigned(p.x1, p.x2), m1 = mean(p.x1), m2 = mean(p.x2);
+    const growth = m1 !== 0 ? (m2 - m1) / m1 * 100 : NaN;
+    const perReg = p.x1.every(x => x !== 0) ? mean(p.x2.map((x, i) => (x - p.x1[i]) / p.x1[i] * 100)) : NaN;
+    const jb = jarqueBera(t.d);
+    rows.push([`<b>${esc(vName(v))}</b>`, p.n, fv(m1), fv(m2), (t.meanDiff >= 0 ? '+' : '') + fv(t.meanDiff), nf(growth, 2) + '%', nf(perReg, 2) + '%', nf(t.t, 3), nf(t.df, 0), fp(t.p), badge(t.p, a), nf(w.W, 1), fp(w.p), badge(w.p, a)]);
+    const dir = t.meanDiff > 0 ? 'meningkat' : t.meanDiff < 0 ? 'menurun' : 'tidak berubah';
+    let s = `<b>${esc(vName(v))}</b> — rata-rata ${dir} dari <b>${fv(m1)}</b> (${esc(cfg.p1)}) menjadi <b>${fv(m2)}</b> (${esc(cfg.p2)}), pertumbuhan <b>${growth >= 0 ? '+' : ''}${nf(growth, 2)}%</b>. `;
+    s += `<br>• Paired t-test: t(${t.df}) = ${nf(t.t, 3)}, ${pq(t.p)} → ${decision(t.p, a)}; perubahan rata-rata <b>${t.p < a ? 'signifikan' : 'tidak signifikan'}</b> (selisih rata-rata ${fv(t.meanDiff)}, CI 95% [${fv(t.ci[0])}; ${fv(t.ci[1])}], ukuran efek d<sub>z</sub> = ${nf(t.dz, 2)}). `;
+    s += `<br>• Wilcoxon: W = ${nf(w.W, 1)}, ${pq(w.p)} (${w.method}) → ${decision(w.p, a)}; <b>${w.p < a ? 'signifikan' : 'tidak signifikan'}</b>. `;
+    s += (t.p < a) === (w.p < a) ? `<br>• Kedua uji <b>sepakat</b>.` : `<br>• ⚠ Kedua uji <b>berbeda kesimpulan</b> – periksa outlier/normalitas; bila selisih tidak normal, utamakan Wilcoxon.`;
+    if (jb) s += `<br>• Cek normalitas selisih (Jarque-Bera): ${pq(jb.p)} → selisih ${jb.p < a ? '<b>tidak normal</b> → Wilcoxon lebih tepat' : 'tidak menyimpang dari normal → paired t-test sah dipakai'}.`;
+    else s += `<br>• Cek normalitas tidak dilakukan (n &lt; 8).`;
+    paras.push(s);
+    txt.push(`${vName(v)} (n=${p.n}): mean ${cfg.p1}=${fv(m1)}, mean ${cfg.p2}=${fv(m2)}, pertumbuhan=${nf(growth, 2)}%; t(${t.df})=${nf(t.t, 3)}, ${pq(t.p)} [${t.p < a ? 'signifikan' : 'tidak signifikan'}]; Wilcoxon W=${nf(w.W, 1)}, ${pq(w.p)} [${w.p < a ? 'signifikan' : 'tidak signifikan'}]`);
+    charts.push(chartCard(`Histogram selisih ${vName(v)}`, histSVG(`Selisih ${vName(v)} (${cfg.p2} − ${cfg.p1})`, t.d, 'Selisih per wilayah', true), `selisih_${vName(v)}`));
+  });
+  let html = `<div class="alert info">Selisih dihitung sebagai <b>${esc(cfg.p2)} − ${esc(cfg.p1)}</b>. Taraf signifikansi α = <b>${nf(a, 3)}</b>. H₀: rata-rata (atau median selisih) = 0.</div>`;
+  if (warns.length) html += `<div class="alert warn">⚠ ${warns.map(esc).join('<br>⚠ ')}</div>`;
+  html += tbl(['Variabel', 'n', `Rata-rata ${esc(cfg.p1)}`, `Rata-rata ${esc(cfg.p2)}`, 'Selisih', 'Pertumbuhan rata-rata', 'Rata-rata growth per wilayah', 't', 'df', 'p (t)', 'Hasil t', 'W', 'p (Wilcoxon)', 'Hasil Wilcoxon'], rows);
+  html += interp(paras) + `<h3>Distribusi selisih antar periode</h3><p class="sub">Garis merah = rata-rata selisih; garis putus-putus = 0 (tidak ada perubahan). Jika histogram bergeser jauh dari 0, perubahan cenderung nyata.</p><div class="charts">${charts.join('')}</div>`;
+  html += formulaBox('Paired t-test:  d_i = x2_i − x1_i ;  t = d̄ / (s_d / √n) ;  df = n − 1\nPertumbuhan (%) = (rata-rata periode 2 − rata-rata periode 1) / rata-rata periode 1 × 100\nWilcoxon: peringkatkan |d_i| (selisih nol dibuang), W⁺ = Σ peringkat selisih positif, W⁻ = Σ peringkat selisih negatif, W = min(W⁺, W⁻).\n  p eksak (n ≤ 50, tanpa nilai kembar) dari distribusi jumlah peringkat; selain itu aproksimasi normal\n  z = (|W⁺ − n(n+1)/4| − 0,5) / √[n(n+1)(2n+1)/24 − koreksi ties]') + srcCode([pairedT, wilcoxonSigned, pT2, incBeta]);
+  publish('paired', 'Uji Beda Berpasangan', html, txt.join('\n'));
+}
+
+/* =====================================================================
+   BAGIAN M — METODE 3: UJI KELOMPOK INDEPENDEN
+   ===================================================================== */
+function runIndep() {
+  const cfg = S.cfg; need(cfg.cat >= 0, 'Uji kelompok independen memerlukan kolom kategori wilayah. Atur di langkah 2 lalu klik “Terapkan”.');
+  need($('#in-a'), 'Kolom kategori hanya memiliki satu nilai sehingga tidak ada dua kelompok untuk dibandingkan.');
+  const vs = checked('in-vars'); need(vs.length > 0, 'Pilih minimal satu variabel yang akan diuji.');
+  const A = $('#in-a').value, B = $('#in-b').value; need(A !== B, 'Kelompok A dan B harus berbeda. Pilih dua kelompok yang berlainan.');
+  const a = cfg.alpha, rows = [], paras = [], charts = [], txt = [], warns = [];
+  vs.forEach(v => {
+    const d = crossData([v]), xa = d.cols[0].filter((_, i) => d.cats[i] === A), xb = d.cols[0].filter((_, i) => d.cats[i] === B);
+    const la = d.ids.filter((_, i) => d.cats[i] === A), lb = d.ids.filter((_, i) => d.cats[i] === B);
+    need(xa.length >= 2 && xb.length >= 2, `Kelompok “${A}” (n=${xa.length}) atau “${B}” (n=${xb.length}) pada variabel “${vName(v)}” terlalu sedikit – tiap kelompok butuh minimal 2 data valid.`);
+    if (d.dropped) warns.push(`“${vName(v)}”: ${d.dropped} wilayah dilewati karena nilai kosong.`);
+    const wt = welchT(xa, xb), mw = mannWhitney(xa, xb);
+    rows.push([`<b>${esc(vName(v))}</b>`, xa.length, xb.length, fv(wt.m1), fv(wt.m2), fv(wt.diff), nf(wt.t, 3), nf(wt.df, 2), fp(wt.p), badge(wt.p, a), nf(mw.U1, 1), fp(mw.p), badge(mw.p, a)]);
+    const hi = wt.diff > 0 ? A : B;
+    let s = `<b>${esc(vName(v))}</b> — rata-rata <b>${esc(A)}</b> = ${fv(wt.m1)} (n=${xa.length}) vs <b>${esc(B)}</b> = ${fv(wt.m2)} (n=${xb.length}); selisih ${wt.diff >= 0 ? '+' : ''}${fv(wt.diff)} (${esc(hi)} lebih tinggi).`;
+    s += `<br>• Welch’s t-test: t = ${nf(wt.t, 3)}, df = ${nf(wt.df, 2)}, ${pq(wt.p)} → ${decision(wt.p, a)}; perbedaan <b>${wt.p < a ? 'signifikan' : 'tidak signifikan'}</b> (CI 95% selisih [${fv(wt.ci[0])}; ${fv(wt.ci[1])}], Cohen’s d = ${nf(wt.d, 2)}).`;
+    s += `<br>• Mann-Whitney U: U = ${nf(mw.U1, 1)}, z = ${nf(mw.z, 3)}, ${pq(mw.p)} → ${decision(mw.p, a)}; <b>${mw.p < a ? 'signifikan' : 'tidak signifikan'}</b>.`;
+    s += (wt.p < a) === (mw.p < a) ? `<br>• Kedua uji <b>sepakat</b>.` : `<br>• ⚠ Kedua uji <b>berbeda kesimpulan</b> – kemungkinan ada outlier/sebaran tidak normal; utamakan Mann-Whitney bila data jelas tidak normal.`;
+    if (Math.min(xa.length, xb.length) < 8) s += `<br>• ⚠ Salah satu kelompok kurang dari 8 data – hasil p-value (terutama Mann-Whitney yang memakai aproksimasi normal) sebaiknya ditafsirkan hati-hati.`;
+    paras.push(s);
+    txt.push(`${vName(v)}: ${A} (n=${xa.length}, mean=${fv(wt.m1)}) vs ${B} (n=${xb.length}, mean=${fv(wt.m2)}); Welch t=${nf(wt.t, 3)}, df=${nf(wt.df, 2)}, ${pq(wt.p)} [${wt.p < a ? 'signifikan' : 'tidak signifikan'}]; Mann-Whitney U=${nf(mw.U1, 1)}, ${pq(mw.p)} [${mw.p < a ? 'signifikan' : 'tidak signifikan'}]`);
+    charts.push(chartCard(`Boxplot ${vName(v)} per kelompok`, boxSVG(`${vName(v)}: ${A} vs ${B}`, [{ label: A, values: xa, labels: la, color: PAL[0] }, { label: B, values: xb, labels: lb, color: PAL[1] }]), `kelompok_${vName(v)}`));
+  });
+  let html = `<div class="alert info">Membandingkan <b>${esc(A)}</b> (A) vs <b>${esc(B)}</b> (B) pada kolom “${esc(vName(cfg.cat))}”${cfg.year >= 0 ? `, data periode ${esc(cfg.per)}` : ''}. α = <b>${nf(a, 3)}</b>. H₀: tidak ada perbedaan antar kelompok.</div>`;
+  if (warns.length) html += `<div class="alert warn">⚠ ${warns.map(esc).join('<br>⚠ ')}</div>`;
+  html += tbl(['Variabel', 'n A', 'n B', 'Rata-rata A', 'Rata-rata B', 'Selisih (A−B)', 't (Welch)', 'df', 'p (t)', 'Hasil t', 'U (A)', 'p (MWU)', 'Hasil MWU'], rows);
+  html += interp(paras) + `<h3>Sebaran per kelompok</h3><div class="charts">${charts.join('')}</div>`;
+  html += formulaBox('Welch: t = (x̄A − x̄B) / √(sA²/nA + sB²/nB) ;  df = (sA²/nA + sB²/nB)² / [ (sA²/nA)²/(nA−1) + (sB²/nB)²/(nB−1) ]\nMann-Whitney: peringkatkan gabungan data, R_A = jumlah peringkat A, U_A = R_A − nA(nA+1)/2\n  z = (|U_A − nA·nB/2| − 0,5) / √[ nA·nB/12 · ((N+1) − koreksi ties) ]  → p dua-sisi dari normal baku') + srcCode([welchT, mannWhitney, rankAvg]);
+  publish('indep', 'Uji Beda Kelompok Independen', html, txt.join('\n'));
+}
+
+/* =====================================================================
+   BAGIAN N — METODE 4: KORELASI
+   ===================================================================== */
+function corrColor(r) { const a = Math.min(1, Math.abs(r)); return r >= 0 ? `rgba(37,99,235,${a * .75})` : `rgba(220,38,38,${a * .75})`; }
+function runCorr() {
+  const cfg = S.cfg; need(cfg.vars.length >= 2, 'Uji korelasi membutuhkan minimal dua variabel numerik.');
+  const x = +$('#co-x').value, y = +$('#co-y').value; need(x !== y, 'Variabel X dan Y harus berbeda. Pilih dua variabel yang berlainan.');
+  const d = crossData([x, y]); need(d.n >= 4, `Hanya ${d.n} wilayah dengan data lengkap untuk kedua variabel (butuh minimal 4).`);
+  const a = cfg.alpha, pe = corrTest(d.cols[0], d.cols[1], 'pearson'), sp = corrTest(d.cols[0], d.cols[1], 'spearman');
+  const catColors = {}; if (cfg.cat >= 0) uniqueVals(cfg.cat).forEach((u, i) => catColors[u] = PAL[i % PAL.length]);
+  const cols = cfg.cat >= 0 ? d.cats.map(c => catColors[c] || '#6b7280') : null, leg = cfg.cat >= 0 ? Object.keys(catColors).map(k => ({ label: k, color: catColors[k] })) : null;
+  const dir = r => (r > 0 ? 'positif (searah: X naik → Y cenderung naik)' : 'negatif (berlawanan arah: X naik → Y cenderung turun)');
+  let html = '';
+  if (d.dropped) html += `<div class="alert warn">⚠ ${d.dropped} wilayah dilewati karena salah satu nilainya kosong. n yang dipakai = ${d.n}.</div>`;
+  html += `<div class="kpis"><div class="kpi"><span>Pearson r</span><b>${nf(pe.r, 3)}</b></div><div class="kpi"><span>p-value Pearson</span><b>${fp(pe.p)}</b></div><div class="kpi"><span>Spearman ρ</span><b>${nf(sp.r, 3)}</b></div><div class="kpi"><span>p-value Spearman</span><b>${fp(sp.p)}</b></div><div class="kpi"><span>R² (r²)</span><b>${nf(pe.r2, 3)}</b></div><div class="kpi"><span>n</span><b>${d.n}</b></div></div>`;
+  html += tbl(['Metode', 'Koefisien', 'p-value', 'CI 95%', 'Kekuatan', 'Keputusan'], [
+    ['Pearson', nf(pe.r, 4), fp(pe.p), pe.ci ? `[${nf(pe.ci[0], 3)}; ${nf(pe.ci[1], 3)}]` : '–', strength(pe.r), badge(pe.p, a)],
+    ['Spearman', nf(sp.r, 4), fp(sp.p), sp.ci ? `[${nf(sp.ci[0], 3)}; ${nf(sp.ci[1], 3)}]` : '–', strength(sp.r), badge(sp.p, a)]]);
+  html += chartCard(`Scatter ${vName(x)} vs ${vName(y)}`, scatterSVG({ title: `${vName(y)} vs ${vName(x)}  (Pearson r = ${nf(pe.r, 3)})`, xs: d.cols[0], ys: d.cols[1], labels: d.ids, colors: cols, xname: vName(x), yname: vName(y), line: true, leg }), `scatter_${vName(x)}_${vName(y)}`);
+  const slope = olsFit([d.cols[0]], d.cols[1]);
+  const para = [`Antara <b>${esc(vName(x))}</b> dan <b>${esc(vName(y))}</b> terdapat hubungan <b>${strength(pe.r)}</b> dan <b>${dir(pe.r)}</b> (Pearson r = ${nf(pe.r, 3)}, ${pq(pe.p)} → ${decision(pe.p, a)}; hubungan <b>${pe.p < a ? 'signifikan' : 'tidak signifikan'}</b> secara statistik). Sekitar <b>${nf(pe.r2 * 100, 1)}%</b> variasi ${esc(vName(y))} dapat dijelaskan secara linear oleh ${esc(vName(x))}.`,
+    `Spearman ρ = ${nf(sp.r, 3)} (${strength(sp.r)}, ${pq(sp.p)}, <b>${sp.p < a ? 'signifikan' : 'tidak signifikan'}</b>). ` + (Math.abs(sp.r - pe.r) > 0.15 ? 'Selisih Pearson dan Spearman cukup besar → kemungkinan ada outlier atau hubungan tidak linear; periksa scatter plot.' : 'Pearson dan Spearman konsisten → hubungan relatif stabil terhadap outlier.'),
+    `Garis tren: ${esc(vName(y))} ≈ ${fc(slope.beta[0])} ${sgn(slope.beta[1])} ${fc(Math.abs(slope.beta[1]))} × ${esc(vName(x))}.`,
+    `⚠ <i>Korelasi menunjukkan keterkaitan, bukan bukti sebab-akibat.</i>`];
+  html += interp(para);
+  const txt = [`${vName(x)} vs ${vName(y)} (n=${d.n}${d.period ? ', periode ' + d.period : ''})`, `Pearson r=${nf(pe.r, 4)}, ${pq(pe.p)} [${pe.p < a ? 'signifikan' : 'tidak signifikan'}], hubungan ${strength(pe.r)} ${pe.r > 0 ? 'positif' : 'negatif'}, R²=${nf(pe.r2, 3)}`, `Spearman rho=${nf(sp.r, 4)}, ${pq(sp.p)} [${sp.p < a ? 'signifikan' : 'tidak signifikan'}], hubungan ${strength(sp.r)}`, `Garis tren: y = ${fc(slope.beta[0])} ${sgn(slope.beta[1])} ${fc(Math.abs(slope.beta[1]))} x`];
+  if ($('#co-mat').checked) {
+    const vs = cfg.vars, dm = crossData(vs);
+    if (dm.n >= 4) {
+      const mk = kind => tbl(['', ...vs.map(v => esc(vName(v)))], vs.map((v, i) => [`<b>${esc(vName(v))}</b>`, ...vs.map((w, j) => { if (i === j) return '1'; const c = corrTest(dm.cols[i], dm.cols[j], kind); return `<span style="display:block;margin:-5px -9px;padding:5px 9px;background:${corrColor(c.r)}" title="${pq(c.p)}">${nf(c.r, 2)}${c.p < a ? '*' : ''}</span>`; })]), 'hm');
+      html += `<h3>Matriks korelasi Pearson (semua variabel, n = ${dm.n})</h3>${mk('pearson')}<h3>Matriks korelasi Spearman</h3>${mk('spearman')}<p class="sub">Tanda * = signifikan pada α = ${nf(a, 3)}. Biru = positif, merah = negatif; makin pekat makin kuat.</p>`;
+    } else html += `<div class="alert warn">Matriks korelasi dilewati: terlalu sedikit wilayah dengan data lengkap untuk semua variabel (${dm.n}).</div>`;
+  }
+  html += formulaBox('Pearson: r = Σ(x−x̄)(y−ȳ) / √[Σ(x−x̄)² · Σ(y−ȳ)²] ;  t = r√(n−2)/√(1−r²), df = n−2\nSpearman: sama dengan Pearson tetapi dihitung pada PERINGKAT x dan y.\nCI 95% (Fisher): tanh( atanh(r) ± 1,96/√(n−3) )\nKekuatan: |r| <0,2 sangat lemah · <0,4 lemah · <0,6 sedang · <0,8 kuat · ≥0,8 sangat kuat') + srcCode([corrCoef, corrTest, rankAvg]);
+  publish('corr', 'Uji Korelasi', html, txt.join('\n'));
+}
+
+/* =====================================================================
+   BAGIAN O — METODE 5: REGRESI LINEAR BERGANDA
+   ===================================================================== */
+function runReg() {
+  const cfg = S.cfg; need(cfg.vars.length >= 2, 'Regresi membutuhkan minimal dua variabel numerik.');
+  const y = +$('#rg-y').value, xs = checked('rg-x').filter(v => v !== y);
+  need(xs.length >= 1, 'Pilih minimal satu variabel independen (X) yang berbeda dari variabel dependen (Y).');
+  const d = crossData([y, ...xs]), k = xs.length;
+  need(d.n > k + 1, `Data tidak cukup: ${d.n} wilayah lengkap untuk ${k} variabel independen. Butuh lebih dari ${k + 1} observasi (idealnya ≥ ${10 * k}).`);
+  const yv = d.cols[0], Xc = d.cols.slice(1), a = cfg.alpha, f = olsFit(Xc, yv), vif = vifOf(Xc);
+  const names = ['Intersep', ...xs.map(vName)], yn = vName(y);
+  let html = '';
+  if (d.dropped) html += `<div class="alert warn">⚠ ${d.dropped} wilayah dilewati karena ada nilai kosong. n yang dipakai = ${d.n}.</div>`;
+  if (d.n < 10 * k) html += `<div class="alert warn">⚠ Jumlah observasi (${d.n}) kurang dari 10× jumlah prediktor (${10 * k}); estimasi bisa tidak stabil.</div>`;
+  const eq = `${yn}ˆ = ${fc(f.beta[0])}` + xs.map((v, j) => ` ${sgn(f.beta[j + 1])} ${fc(Math.abs(f.beta[j + 1]))}·${vName(v)}`).join('');
+  html += `<h3>Persamaan regresi</h3><div class="eq">${esc(eq)}</div>`;
+  html += `<div class="kpis"><div class="kpi"><span>R²</span><b>${nf(f.R2, 4)}</b></div><div class="kpi"><span>R² disesuaikan</span><b>${nf(f.adjR2, 4)}</b></div><div class="kpi"><span>Statistik F (${k}; ${f.dfE})</span><b>${nf(f.F, 3)}</b></div><div class="kpi"><span>p-value (uji F)</span><b>${fp(f.pF)}</b></div><div class="kpi"><span>RMSE (galat baku)</span><b>${fv(f.rmse)}</b></div><div class="kpi"><span>n</span><b>${d.n}</b></div></div>`;
+  html += `<h3>Koefisien regresi (uji t)</h3>` + tbl(['Variabel', 'Koefisien (β)', 'Galat baku', 't', 'p-value', 'Keputusan', 'VIF'],
+    names.map((nm, j) => [`<b>${esc(nm)}</b>`, fc(f.beta[j]), fc(f.se[j]), nf(f.t[j], 3), fp(f.pv[j]), badge(f.pv[j], a), j === 0 ? '–' : (isFinite(vif[j - 1]) ? nf(vif[j - 1], 2) : '∞')]));
+  html += `<h3>Tabel ANOVA (uji F keseluruhan model)</h3>` + tbl(['Sumber', 'JK (SS)', 'db', 'RK (MS)', 'F', 'p-value'], [
+    ['Regresi', fv(f.SSR), k, fv(f.SSR / k), nf(f.F, 3), fp(f.pF)], ['Residual', fv(f.SSE), f.dfE, fv(f.MSE), '', ''], ['Total', fv(f.SST), d.n - 1, '', '', '']]);
+  const stdRes = f.resid.map(e => e / f.rmse);
+  html += `<h3>Grafik diagnostik</h3><div class="charts">` +
+    chartCard('Aktual vs Prediksi', scatterSVG({ title: `${yn}: Aktual vs Prediksi (R² = ${nf(f.R2, 3)})`, xs: f.fitted, ys: yv, labels: d.ids, xname: 'Nilai prediksi (fitted)', yname: 'Nilai aktual', identity: true }), `aktual_vs_prediksi_${yn}`) +
+    chartCard('Residual vs Prediksi', scatterSVG({ title: 'Residual vs Prediksi', xs: f.fitted, ys: f.resid, labels: d.ids, xname: 'Nilai prediksi (fitted)', yname: 'Residual', hline: 0 }), `residual_vs_prediksi_${yn}`) + `</div>`;
+  html += `<h3>Tabel residual</h3><p class="sub">Residual = aktual − prediksi. Residual terstandar |z| &gt; 2 ditandai ⚠ (kandidat outlier/pengaruh).</p>` +
+    tbl(['Wilayah', 'Aktual', 'Prediksi', 'Residual', 'Residual terstandar', ''], d.ids.map((id, i) => [esc(id), fv(yv[i]), fv(f.fitted[i]), fv(f.resid[i]), nf(stdRes[i], 2), Math.abs(stdRes[i]) > 2 ? '⚠' : '']));
+
+  // interpretasi
+  const jb = jarqueBera(f.resid), paras = [];
+  paras.push(`Model secara keseluruhan <b>${f.pF < a ? 'signifikan' : 'tidak signifikan'}</b> (F(${k}, ${f.dfE}) = ${nf(f.F, 3)}, ${pq(f.pF)} → ${decision(f.pF, a)}). R² = ${nf(f.R2, 3)}: <b>${nf(f.R2 * 100, 1)}%</b> variasi ${esc(yn)} dijelaskan oleh ${xs.map(v => esc(vName(v))).join(', ')}; R² disesuaikan = ${nf(f.adjR2, 3)}. Rata-rata selisih prediksi dengan aktual (RMSE) ≈ ${fv(f.rmse)} satuan ${esc(yn)}.`);
+  xs.forEach((v, j) => {
+    const b = f.beta[j + 1], sig = f.pv[j + 1] < a;
+    paras.push(`<b>${esc(vName(v))}</b>: koefisien ${fc(b)} (${pq(f.pv[j + 1])}, <b>${sig ? 'signifikan' : 'tidak signifikan'}</b>). ` + (sig ? `Setiap kenaikan 1 satuan ${esc(vName(v))}, ${esc(yn)} diperkirakan <b>${b >= 0 ? 'naik' : 'turun'} ${fc(Math.abs(b))}</b> satuan, dengan variabel lain dianggap tetap (<i>ceteris paribus</i>).` : `Tidak ada bukti cukup bahwa ${esc(vName(v))} berpengaruh terhadap ${esc(yn)} setelah variabel lain dikendalikan.`));
+  });
+  const hiV = xs.filter((_, j) => vif[j] > 10);
+  if (k >= 2) paras.push(hiV.length ? `⚠ <b>Multikolinearitas tinggi</b> (VIF &gt; 10) pada: ${hiV.map(v => esc(vName(v))).join(', ')}. Koefisien bisa tidak stabil; pertimbangkan membuang salah satu variabel yang saling berkorelasi.` : `VIF semua prediktor ≤ 10 → tidak ada indikasi multikolinearitas serius.`);
+  if (jb) paras.push(`Normalitas residual (Jarque-Bera): ${pq(jb.p)} → residual ${jb.p < a ? '<b>menyimpang dari normal</b>; uji t/F sebaiknya ditafsirkan hati-hati' : 'tidak menyimpang signifikan dari normal'}.`);
+  const outs = d.ids.filter((_, i) => Math.abs(stdRes[i]) > 2);
+  if (outs.length) paras.push(`Wilayah dengan residual besar (|z| &gt; 2): ${outs.map(esc).join(', ')} – nilai aktualnya jauh dari yang diprediksi model.`);
+  paras.push('⚠ <i>Regresi menunjukkan hubungan statistik, bukan otomatis sebab-akibat.</i>');
+  html += interp(paras);
+
+  // detail matriks
+  const mt = M => `<div class="tw"><table>${M.map(r => `<tr>${r.map(v => `<td>${fv(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  html += `<details><summary>🧮 Lihat matriks XᵀX dan Xᵀy (langkah hitung manual)</summary><p>Persamaan normal: <code>(XᵀX) β = Xᵀy</code>, diselesaikan dengan eliminasi Gauss (setara <code>np.linalg.solve</code>).</p><b>XᵀX</b>${mt(f.XtX)}<b>Xᵀy</b>${mt(f.Xty.map(v => [v]))}<b>β</b>${mt(f.beta.map(v => [v]))}</details>`;
+  html += formulaBox('Model: y = β0 + β1·x1 + … + βk·xk + ε\nPersamaan normal: β = (XᵀX)⁻¹ Xᵀy  → diselesaikan dgn eliminasi Gauss\nResidual e = y − Xβ ;  SSE = Σe² ;  SST = Σ(y−ȳ)² ;  SSR = SST − SSE ;  R² = SSR/SST\nR² disesuaikan = 1 − (1−R²)(n−1)/(n−k−1)\nUji F = (SSR/k) / (SSE/(n−k−1)) ;  Galat baku βj = √(MSE · [(XᵀX)⁻¹]jj) ;  t = βj / SE(βj), df = n−k−1\nVIF_j = 1 / (1 − R²_j)  (R²_j dari regresi xj terhadap prediktor lain)') + srcCode([solveLinear, invertMatrix, olsFit, vifOf]);
+  const txt = [`Model: ${eq}`, `n=${d.n}, k=${k}, R2=${nf(f.R2, 4)}, adjR2=${nf(f.adjR2, 4)}, F(${k},${f.dfE})=${nf(f.F, 3)}, ${pq(f.pF)}, RMSE=${fv(f.rmse)}`, 'Koefisien:',
+    ...names.map((nm, j) => `  ${nm}: b=${fc(f.beta[j])}, SE=${fc(f.se[j])}, t=${nf(f.t[j], 3)}, ${pq(f.pv[j])} [${f.pv[j] < a ? 'signifikan' : 'tidak signifikan'}]${j > 0 && isFinite(vif[j - 1]) ? ', VIF=' + nf(vif[j - 1], 2) : ''}`),
+    ...paras.map(plainOf)];
+  publish('reg', 'Regresi Linear Berganda (OLS)', html, txt.join('\n'));
+}
+
+/* =====================================================================
+   BAGIAN P — EVENT HANDLER
+   ===================================================================== */
+const RUNNERS = { explore: runExplore, paired: runPaired, indep: runIndep, corr: runCorr, reg: runReg };
+
+async function handleFile(file) {
+  const msg = $('#dataMsg'); showMsg(msg, '', '');
+  try {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    need(ext !== 'xls', 'Format .xls (Excel lama) tidak didukung. Buka file di Excel lalu “Simpan Sebagai” .xlsx atau .csv.');
+    need(['xlsx', 'csv', 'txt', 'tsv'].includes(ext), `Format “.${ext}” tidak dikenali. Gunakan file .xlsx atau .csv.`);
+    need(file.size > 0, 'File kosong (0 byte).');
+    need(file.size < 40e6, 'File terlalu besar (>40 MB) untuk diproses di browser.');
+    if (ext === 'xlsx') {
+      const wbk = await xlsxOpen(await file.arrayBuffer()); S.wbk = wbk;
+      const sel = $('#sheetSel'); sel.innerHTML = wbk.sheets.map((s, i) => `<option value="${i}">${esc(s.name)}</option>`).join('');
+      $('#sheetPick').hidden = wbk.sheets.length < 2;
+      await loadSheet(0, file.name);
+    } else {
+      $('#sheetPick').hidden = true; S.wbk = null;
+      const rows = parseCSV(await file.text());
+      need(rows.length >= 2, 'File CSV tidak berisi data (minimal 1 baris header dan 1 baris data).');
+      loadTable(rows[0], rows.slice(1), file.name);
+    }
+    showMsg(msg, 'ok', '✅ File berhasil dibaca. Lanjut ke langkah 2.');
+  } catch (e) {
+    if (e instanceof UserError) showMsg(msg, 'err', '❌ ' + esc(e.message));
+    else { console.error(e); showMsg(msg, 'err', '❌ Gagal membaca file: ' + esc(e.message) + '. Pastikan file tidak rusak/terproteksi password.'); }
+  }
+}
+async function loadSheet(i, fname) {
+  const rows = await xlsxSheetRows(S.wbk, i);
+  const ne = rows.filter(r => r.some(v => v !== null && String(v).trim() !== ''));
+  need(ne.length >= 2, `Lembar “${S.wbk.sheets[i].name}” kosong atau hanya berisi satu baris. Pilih lembar lain atau periksa file.`);
+  loadTable(ne[0], ne.slice(1), `${fname}${S.wbk.sheets.length > 1 ? ' [' + S.wbk.sheets[i].name + ']' : ''}`);
+}
+
+function init() {
+  const drop = $('#drop'), file = $('#file');
+  drop.onclick = () => file.click();
+  file.onchange = () => { if (file.files[0]) handleFile(file.files[0]); file.value = ''; };
+  ['dragover', 'dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => { if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+  $('#sheetSel').onchange = async e => { try { await loadSheet(+e.target.value, S.name.replace(/ \[.*\]$/, '')); } catch (er) { showMsg($('#dataMsg'), 'err', '❌ ' + esc(er.message)); } };
+  $('#btnSample').onclick = () => { const s = sampleData(); $('#sheetPick').hidden = true; showMsg($('#dataMsg'), 'ok', '✅ Data contoh (dummy) dimuat: 38 kabupaten/kota Jawa Timur × 2 tahun.'); loadTable(s.headers, s.rows, 'Data contoh Jatim 2024–2025 (dummy)'); };
+  $('#btnTemplate').onclick = () => { const s = sampleData(); const csv = [s.headers, ...s.rows].map(r => r.map(v => (String(v).includes(',') ? `"${v}"` : v)).join(',')).join('\n'); downloadBlob(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }), 'contoh_data_jatim_dummy.csv'); };
+  $('#cYear').onchange = () => refreshYearAndVars(false);
+  $('#cId').onchange = $('#cCat').onchange = () => refreshYearAndVars(false);
+  $('#cP1').onchange = $('#cP2').onchange = () => syncPer();
+  $('#btnApply').onclick = applyConfig;
+  document.addEventListener('change', e => { if (e.target.matches('.chip input[type=checkbox]')) e.target.parentElement.classList.toggle('on', e.target.checked); });
+  $('#tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; $$('#tabs button').forEach(x => x.classList.toggle('act', x === b)); $$('.tabpanel').forEach(p => p.classList.toggle('act', p.id === 'tab-' + b.dataset.tab)); };
+  document.addEventListener('click', e => {
+    const r = e.target.closest('[data-run]'); if (r) { const t = r.dataset.run; try { RUNNERS[t](); } catch (er) { showError(t, er); } return; }
+    const dl = e.target.closest('[data-dl]'); if (dl) { svgToPng(dl.closest('figure').querySelector('svg'), dl.dataset.dl.replace(/[^\w\-]+/g, '_')); return; }
+    const cp = e.target.closest('[data-copy]'); if (cp) { copyText(S.last[cp.dataset.copy] || '').then(ok => { const o = cp.textContent; cp.textContent = ok ? '✅ Tersalin' : '⚠ Gagal menyalin'; setTimeout(() => cp.textContent = o, 1500); }); return; }
+    const tx = e.target.closest('[data-txt]'); if (tx) { downloadBlob(new Blob(['﻿' + (S.last[tx.dataset.txt] || '')], { type: 'text/plain;charset=utf-8' }), `hasil_${tx.dataset.txt}.txt`); }
+  });
+  $('#btnProj').onclick = () => document.body.classList.toggle('proj');
+  $('#btnReport').onclick = () => {
+    const keys = Object.keys(S.report); if (!keys.length) { alert('Belum ada analisis yang dijalankan. Jalankan salah satu metode terlebih dahulu.'); return; }
+    downloadBlob(new Blob(['﻿' + 'LAPORAN ANALISIS — Pojok Statistik\n' + '='.repeat(40) + '\n\n' + keys.map(k => S.report[k]).join('\n\n' + '-'.repeat(40) + '\n\n')], { type: 'text/plain;charset=utf-8' }), 'laporan_analisis.txt');
+  };
+}
+init();
+</script>
+</body>
+</html>
